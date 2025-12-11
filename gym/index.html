@@ -1,0 +1,322 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Treino Jiu-Jitsu – App</title>
+  <style>
+    :root {
+      --bg: #0f141a;
+      --card: #16202a;
+      --primary: #2dd4bf; /* teal */
+      --primary-600: #14b8a6;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --accent: #60a5fa; /* blue */
+    }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, 'Helvetica Neue', Arial; background: var(--bg); color: var(--text); }
+    header { position: sticky; top:0; z-index:10; background: linear-gradient(135deg, #0b1021 0%, #102a43 50%, #0b3b3e 100%); padding:16px 20px; box-shadow: 0 2px 10px rgba(0,0,0,.35); }
+    header h1 { font-size:1.25rem; margin:0 0 6px; }
+    header p { margin:0; color: var(--muted); font-size:.9rem; }
+    .container { max-width: 1000px; margin:0 auto; padding:16px; }
+
+    .tabs { display:grid; grid-template-columns: repeat(4,1fr); gap:8px; margin:8px 0; }
+    .tab-btn { border:none; border-radius:10px; padding:12px; background:#0e1726; color:var(--text); font-weight:600; cursor:pointer; box-shadow: inset 0 0 0 1px #223046; transition:.2s ease; }
+    .tab-btn.active { background: var(--primary); color:#051016; }
+
+    .grid { display:grid; grid-template-columns:1fr; gap:12px; }
+    @media (min-width:640px){ .grid { grid-template-columns: 1fr 1fr; } }
+    @media (min-width:980px){ .grid { grid-template-columns: 1fr 1fr 1fr; } }
+
+    .card { background: var(--card); border-radius:14px; padding:14px; box-shadow: 0 10px 24px rgba(0,0,0,.35); display:flex; flex-direction:column; gap:10px; }
+    .card h3, .card h2 { margin:0; }
+    .meta { display:flex; flex-wrap:wrap; gap:10px; color:var(--muted); font-size:.9rem; }
+    .badge { background:#0e1726; padding:6px 10px; border-radius:999px; }
+    .actions { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+    .btn { border:none; border-radius:10px; padding:10px 12px; font-weight:700; cursor:pointer; transition:.2s ease; color:#051016; }
+    .btn.primary { background: var(--primary); }
+    .btn.primary:hover { background: var(--primary-600); }
+    .btn.muted { background:#263245; color:var(--text); }
+    .btn.danger { background: var(--danger); color:white; }
+    .btn.warning { background: var(--warning); color:#0b0f14; }
+
+    .bar { height:12px; background:#223046; border-radius:999px; overflow:hidden; }
+    .bar > .fill { height:100%; width:0%; background: var(--primary); transition: width .2s linear; }
+
+    .modal-backdrop { position:fixed; inset:0; background: rgba(0,0,0,.6); display:none; align-items:center; justify-content:center; padding:16px; z-index:50; }
+    .modal { width:100%; max-width:520px; background: var(--card); border-radius:16px; box-shadow: 0 20px 40px rgba(0,0,0,.5); padding:18px; display:flex; flex-direction:column; gap:12px; position:relative; }
+    .modal h2 { margin:0; }
+    .timer { font-size:2.4rem; letter-spacing:1px; text-align:center; font-weight:800; }
+    .modal-actions { display:flex; gap:8px; justify-content:center; }
+    .close { position:absolute; top:8px; right:12px; background:transparent; color:var(--text); border: none; font-size:1.4rem; cursor:pointer; }
+    .small { font-size:.9rem; color: var(--muted); text-align:center; }
+
+    footer { position:sticky; bottom:0; background:#0e1726; padding:10px 16px; color:var(--muted); display:flex; justify-content:space-between; align-items:center; }
+    .footer-note { font-size:.85rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Plano de Treino – Jiu-Jitsu (Estilo App)</h1>
+    <p>Dashboard como aba | Mobilidade específica por treino | Cronômetro de sessão e repetições</p>
+  </header>
+
+  <div class="container">
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="D">Dashboard</button>
+      <button class="tab-btn" data-tab="A">Treino A</button>
+      <button class="tab-btn" data-tab="B">Treino B</button>
+      <button class="tab-btn" data-tab="C">Treino C</button>
+    </div>
+
+    <div id="tab-D" class="grid"></div>
+    <div id="tab-A" class="grid" style="display:none"></div>
+    <div id="tab-B" class="grid" style="display:none"></div>
+    <div id="tab-C" class="grid" style="display:none"></div>
+  </div>
+
+  <!-- Modal Cronômetro de Intervalo -->
+  <div id="backdrop" class="modal-backdrop">
+    <div class="modal">
+      <button class="close" title="Fechar" onclick="TimerUI.close()">✕</button>
+      <h2 id="modal-title">Cronômetro</h2>
+      <div class="small" id="modal-subtitle"></div>
+      <div class="small" id="modal-details"></div>
+      <div class="timer" id="timer-text">00:00</div>
+      <div class="bar"><div id="timer-bar" class="fill"></div></div>
+      <div class="modal-actions">
+        <button class="btn primary" onclick="TimerUI.toggle()" id="btn-toggle">Iniciar</button>
+        <button class="btn muted" onclick="TimerUI.reset()">Reiniciar</button>
+        <button class="btn danger" onclick="TimerUI.close()">Fechar</button>
+      </div>
+      <p class="small" id="modal-help" style="text-align:center">Repetições deste exercício: <b id="modal-count">0</b></p>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-note">Meta por treino: 17 sessões • Intervalos: 90s compostos, 60s acessórios, 45/30s estabilidade/mobilidade • Fim: 05/04/2025</div>
+    <div class="footer-note">Versão offline • App-like</div>
+  </footer>
+
+  <script>
+    const GOAL = 17;
+    const END_DATE_LABEL = '05/04/2025';
+    const END_DATE_ISO = '2025-04-05';
+
+    function loadJSON(key, fallback){ try { return JSON.parse(localStorage.getItem(key)) || fallback; } catch(e){ return fallback; } }
+    function saveJSON(key, obj){ localStorage.setItem(key, JSON.stringify(obj)); }
+
+    let COUNTS_FINISH = loadJSON('jj_counts', {A:0,B:0,C:0});
+    let COUNTS_START  = loadJSON('jj_starts', {A:0,B:0,C:0});
+    let TIMER_COUNTS  = loadJSON('jj_timer_counts', {});
+    let SESSION_ACTIVE = loadJSON('jj_session_active', null);
+    let SESSION_STARTED_AT = loadJSON('jj_session_started_at', null);
+    let SESSION_TICK = null;
+
+    const BASE = {
+      A: [
+        { nome: 'Agachamento livre', series: 4, reps: '8', intervalo: 90 },
+        { nome: 'Levantamento terra romeno', series: 3, reps: '10', intervalo: 90 },
+        { nome: 'Passada com halteres', series: 3, reps: '12 cada perna', intervalo: 60 },
+        { nome: 'Prancha com elevação de perna', series: 3, reps: '30 seg', intervalo: 45 },
+      ],
+      B: [
+        { nome: 'Supino reto com barra', series: 4, reps: '8', intervalo: 90 },
+        { nome: 'Desenvolvimento militar', series: 3, reps: '10', intervalo: 90 },
+        { nome: 'Tríceps testa', series: 3, reps: '12', intervalo: 60 },
+        { nome: 'Flexão com joelho no peito (dinâmica)', series: 3, reps: '12', intervalo: 45 },
+        { nome: 'Prancha lateral com rotação', series: 3, reps: '12 cada lado', intervalo: 45 },
+      ],
+      C: [
+        { nome: 'Barra fixa / Puxada na polia', series: 4, reps: '8', intervalo: 90 },
+        { nome: 'Remada curvada', series: 3, reps: '10', intervalo: 90 },
+        { nome: 'Rosca direta', series: 3, reps: '12', intervalo: 60 },
+        { nome: 'Swing com kettlebell', series: 3, reps: '15', intervalo: 60 },
+        { nome: 'Abdominal com bola suíça', series: 3, reps: '15', intervalo: 45 },
+      ],
+    };
+
+    const MOB_BY_TAB = {
+      A: [
+        { nome: 'Posição 90/90 (quadril)', series: 3, reps: '30 seg por lado', intervalo: 30 },
+        { nome: 'Borboleta dinâmica (adutores)', series: 3, reps: '30 seg', intervalo: 30 },
+      ],
+      B: [
+        { nome: 'Alongamento dinâmico (cadeia posterior)', series: 3, reps: '30 seg', intervalo: 30 },
+        { nome: 'Elevação de perna na barra', series: 3, reps: '10–15', intervalo: 45 },
+      ],
+      C: [
+        { nome: 'Isquiotibiais com faixa (ativo)', series: 3, reps: '30 seg por lado', intervalo: 30 },
+        { nome: 'Posição Pigeon (quadril)', series: 3, reps: '30 seg por lado', intervalo: 30 },
+      ],
+    };
+
+    function two(n){ return String(n).padStart(2,'0'); }
+    function formatTime(s){ const m=Math.floor(s/60), r=s%60; return `${two(m)}:${two(r)}`; }
+    function formatStopwatch(ms){ const s=Math.floor(ms/1000); const hh=Math.floor(s/3600); const mm=Math.floor((s%3600)/60); const ss=s%60; return `${two(hh)}:${two(mm)}:${two(ss)}`; }
+    function slug(tab, nome){ return `${tab}::${nome}`; }
+
+    function endDateStatus(){
+      try {
+        const end = new Date(END_DATE_ISO + 'T00:00:00');
+        const now = new Date();
+        const diff = Math.ceil((end.getTime() - now.getTime()) / (1000*60*60*24));
+        if (diff < 0) return `Fim: ${END_DATE_LABEL} • Encerrado`;
+        if (diff === 0) return `Fim: ${END_DATE_LABEL} • Hoje`;
+        return `Fim: ${END_DATE_LABEL} • Faltam ${diff} dias`;
+      } catch(e){ return `Fim: ${END_DATE_LABEL}`; }
+    }
+
+    function renderDashboard(){
+      const cont = document.getElementById('tab-D'); cont.innerHTML = '';
+      const prazo = endDateStatus();
+      ['A','B','C'].forEach(t => {
+        const cF = COUNTS_FINISH[t]||0, cS = COUNTS_START[t]||0; const pct = Math.min(100, Math.round((cF/GOAL)*100));
+        const isActive = SESSION_ACTIVE === t;
+        const elapsed = isActive && SESSION_STARTED_AT ? formatStopwatch(Date.now()-SESSION_STARTED_AT) : '00:00:00';
+        const card = document.createElement('div'); card.className = 'card';
+        card.innerHTML = `
+          <h2>Treino ${t}</h2>
+          <div class="meta">
+            <span class="badge">Iniciados: <b>${cS}</b></span>
+            <span class="badge">Concluídos: <b>${cF}</b></span>
+            <span class="badge">Meta: <b>${GOAL}</b></span>
+            <span class="badge">${prazo}</span>
+            <span class="badge">Status: <b>${isActive?'Em andamento':'Parado'}</b></span>
+            <span class="badge">Tempo da sessão: <b id="dash-elapsed-${t}">${elapsed}</b></span>
+          </div>
+          <div class="bar"><div class="fill" style="width:${pct}%"></div></div>
+          <div class="meta"><span>Progresso</span><span><b>${pct}%</b></span></div>
+          <div class="actions">
+            <button class="btn danger" onclick="resetAll()">🗑 Zerar histórico</button>
+          </div>
+        `;
+        cont.appendChild(card);
+      });
+    }
+
+    function renderTab(t){
+      const cont = document.getElementById('tab-' + t); cont.innerHTML = '';
+      const isActive = SESSION_ACTIVE === t;
+      const elapsed = isActive && SESSION_STARTED_AT ? formatStopwatch(Date.now()-SESSION_STARTED_AT) : '00:00:00';
+
+      const header = document.createElement('div'); header.className = 'card';
+      header.innerHTML = `
+        <h2>Controle do Treino ${t}</h2>
+        <div class="meta">
+          <span class="badge">Sessões iniciadas: <b id="s-start-${t}">${COUNTS_START[t]||0}</b></span>
+          <span class="badge">Sessões concluídas: <b id="s-finish-${t}">${COUNTS_FINISH[t]||0}</b></span>
+          <span class="badge">Meta: <b>${GOAL}</b></span>
+          <span class="badge">${endDateStatus()}</span>
+          <span class="badge">Status: <b id="s-status-${t}">${isActive?'Em andamento':'Parado'}</b></span>
+          <span class="badge">Tempo da sessão: <b id="s-elapsed-${t}">${elapsed}</b></span>
+        </div>
+        <div class="actions">
+          <button class="btn primary" onclick="startSession('${t}')">▶ Iniciar treino</button>
+          <button class="btn warning" onclick="finishSession('${t}')">✔ Finalizar treino</button>
+        </div>
+      `;
+      cont.appendChild(header);
+
+      BASE[t].forEach((ex) => cont.appendChild(makeExerciseCard(t, ex)));
+      const sep = document.createElement('div'); sep.className = 'card'; sep.innerHTML = `<h3>Mobilidade (pós-sessão)</h3><div class="meta"><span class='badge'>Executar após o treino</span></div>`; cont.appendChild(sep);
+      MOB_BY_TAB[t].forEach((ex) => cont.appendChild(makeExerciseCard(t, ex)));
+    }
+
+    function makeExerciseCard(tab, ex){
+      const id = slug(tab, ex.nome);
+      const card = document.createElement('div'); card.className = 'card';
+      card.innerHTML = `
+        <h3>${ex.nome}</h3>
+        <div class="meta">
+          <span class="badge">Séries: <b>${ex.series}</b></span>
+          <span class="badge">Repetições: <b>${ex.reps}</b></span>
+          <span class="badge">Intervalo: <b>${formatTime(ex.intervalo)}</b></span>
+        </div>
+        <div class="actions">
+          <button class="btn primary" onclick="TimerUI.open('${id}', '${tab}', '${ex.nome}', ${ex.intervalo}, ${ex.series}, '${ex.reps}')">⏱ Intervalo</button>
+          <button class="btn muted" onclick="markDone(this)">✅ Concluir exercício</button>
+        </div>
+      `;
+      return card;
+    }
+
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const tab = btn.dataset.tab;
+        ['D','A','B','C'].forEach(t => { document.getElementById('tab-'+t).style.display = (t === tab) ? 'grid' : 'none'; });
+      });
+    });
+
+    function startSession(tab){
+      if (SESSION_ACTIVE && SESSION_ACTIVE !== tab){ toast('Já existe um treino em andamento: '+SESSION_ACTIVE); return; }
+      if (!SESSION_ACTIVE){ SESSION_ACTIVE = tab; saveJSON('jj_session_active', SESSION_ACTIVE); SESSION_STARTED_AT = Date.now(); saveJSON('jj_session_started_at', SESSION_STARTED_AT); COUNTS_START[tab] = (COUNTS_START[tab]||0) + 1; saveJSON('jj_starts', COUNTS_START); successChime(); toast('Treino '+tab+' iniciado!'); startSessionTicker(); } else { toast('Treino '+tab+' já está em andamento.'); }
+      renderAll();
+    }
+    function finishSession(tab){
+      if (!SESSION_ACTIVE){ toast('Nenhum treino em andamento.'); return; }
+      if (SESSION_ACTIVE !== tab){ toast('Finalize o treino atual: '+SESSION_ACTIVE); return; }
+      COUNTS_FINISH[tab] = (COUNTS_FINISH[tab]||0) + 1; saveJSON('jj_counts', COUNTS_FINISH); stopSessionTicker(); SESSION_ACTIVE = null; saveJSON('jj_session_active', SESSION_ACTIVE); SESSION_STARTED_AT = null; saveJSON('jj_session_started_at', SESSION_STARTED_AT); successChime(); toast('Treino '+tab+' concluído!'); renderAll();
+    }
+    function startSessionTicker(){ if (SESSION_TICK) clearInterval(SESSION_TICK); SESSION_TICK = setInterval(() => { if (!SESSION_ACTIVE || !SESSION_STARTED_AT) return; const elapsed = formatStopwatch(Date.now() - SESSION_STARTED_AT); const idDash = 'dash-elapsed-' + SESSION_ACTIVE; const idTab = 's-elapsed-' + SESSION_ACTIVE; document.getElementById(idDash)?.replaceChildren(document.createTextNode(elapsed)); document.getElementById(idTab)?.replaceChildren(document.createTextNode(elapsed)); }, 1000); }
+    function stopSessionTicker(){ if (SESSION_TICK) { clearInterval(SESSION_TICK); SESSION_TICK = null; } }
+
+    function resetAll(){ if(confirm('Tem certeza que deseja zerar todo o histórico?')){ COUNTS_FINISH = {A:0,B:0,C:0}; saveJSON('jj_counts', COUNTS_FINISH); COUNTS_START = {A:0,B:0,C:0}; saveJSON('jj_starts', COUNTS_START); TIMER_COUNTS = {}; saveJSON('jj_timer_counts', TIMER_COUNTS); stopSessionTicker(); SESSION_ACTIVE = null; saveJSON('jj_session_active', SESSION_ACTIVE); SESSION_STARTED_AT = null; saveJSON('jj_session_started_at', SESSION_STARTED_AT); toast('Histórico zerado.'); successChime(); renderAll(); } }
+
+    function markDone(el){ el.textContent = '✔️ Concluído'; el.disabled = true; el.classList.add('muted'); toast('Exercício concluído.'); }
+
+    // Timer UI v5 + details de Séries/Reps no modal
+    const TimerUI = (() => {
+      let total = 0, remain = 0, ticking = false, iv = null, currentId = null, sessionReps = 0;
+      const backdrop = document.getElementById('backdrop');
+      const txt = document.getElementById('timer-text');
+      const bar = document.getElementById('timer-bar');
+      const title = document.getElementById('modal-title');
+      const subtitle = document.getElementById('modal-subtitle');
+      const details = document.getElementById('modal-details');
+      const modalCount = document.getElementById('modal-count');
+      const btnToggle = document.getElementById('btn-toggle');
+
+      function open(id, tab, nome, segundos, series, reps){
+        currentId = id;
+        title.textContent = nome;
+        subtitle.textContent = `Treino ${tab} • Intervalo: ${formatTime(segundos)}`;
+        details.textContent = `Séries: ${series} | Repetições: ${reps}`;
+        total = remain = segundos;
+        update();
+        btnToggle.textContent = 'Iniciar'; btnToggle.disabled = false; ticking = false;
+        sessionReps = 0; modalCount.textContent = sessionReps; // zera visual
+        backdrop.style.display = 'flex';
+      }
+      function close(){ stop(); backdrop.style.display = 'none'; }
+      function toggle(){ if (ticking) { pause(); } else { start(); } }
+      function start(){ if (iv) return; ticking = true; btnToggle.textContent = 'Pausar'; sessionReps += 1; modalCount.textContent = sessionReps; iv = setInterval(tick, 1000); }
+      function pause(){ ticking = false; btnToggle.textContent = 'Retomar'; if (iv) { clearInterval(iv); iv = null; } }
+      function stop(){ ticking = false; if (iv) { clearInterval(iv); iv = null; } }
+      function reset(){ stop(); remain = total; btnToggle.textContent = 'Iniciar'; btnToggle.disabled = false; update(); }
+      function tick(){ remain -= 1; if (remain <= 0){ remain = 0; update(); finishTone(); stop(); btnToggle.textContent = 'Concluído'; btnToggle.disabled = true; return; } update(); }
+      function update(){ txt.textContent = formatTime(remain); const pct = total ? ((total - remain) / total) * 100 : 0; bar.style.width = pct + '%'; }
+
+      return { open, close, toggle, reset };
+    })();
+
+    // Sons
+    function finishTone(){ try { const ctx = new (window.AudioContext || window.webkitAudioContext)(); const g = ctx.createGain(); g.gain.value = 0.09; g.connect(ctx.destination); const seq = [880, 660, 990]; let t = ctx.currentTime; seq.forEach((freq) => { const o = ctx.createOscillator(); o.type='sine'; o.frequency.setValueAtTime(freq,t); o.connect(g); o.start(t); o.stop(t+0.18); t += 0.22; }); } catch(e) {} }
+    function successChime(){ try { const ctx = new (window.AudioContext || window.webkitAudioContext)(); const g = ctx.createGain(); g.gain.value = 0.07; g.connect(ctx.destination); const o = ctx.createOscillator(); o.type = 'triangle'; const now = ctx.currentTime; o.frequency.setValueAtTime(440, now); o.frequency.exponentialRampToValueAtTime(1320, now+0.3); o.connect(g); o.start(now); o.stop(now+0.32); } catch(e) {} }
+
+    // Toast
+    let toastTimeout = null;
+    function toast(msg){ let t = document.getElementById('toast'); if (!t){ t = document.createElement('div'); t.id='toast'; t.style.position='fixed'; t.style.bottom='18px'; t.style.left='50%'; t.style.transform='translateX(-50%)'; t.style.background='#0e1726'; t.style.color='white'; t.style.padding='10px 14px'; t.style.borderRadius='10px'; t.style.boxShadow='0 10px 24px rgba(0,0,0,.35)'; t.style.zIndex='80'; document.body.appendChild(t); } t.textContent = msg; t.style.display = 'block'; clearTimeout(toastTimeout); toastTimeout = setTimeout(() => { t.style.display = 'none'; }, 2000); }
+
+    function renderAll(){ renderDashboard(); ['A','B','C'].forEach(renderTab); }
+
+    renderAll(); if (SESSION_ACTIVE && SESSION_STARTED_AT){ startSessionTicker(); }
+  </script>
+</body>
+</html>

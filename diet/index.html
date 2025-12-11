@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dieta do Maicon – App (arquivo único)</title>
+  <style>
+    :root{--bg:#0f1115;--card:#1a1f27;--text:#e6e6e6;--muted:#a7a7a7;--primary:#4f7cff;--success:#2ecc71;--yellow:#f1c40f;--border:#2b2f36}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial,"Noto Sans",sans-serif;background:var(--bg);color:var(--text)}
+    a{color:var(--primary);text-decoration:none}
+    .app-header{display:flex;align-items:center;justify-content:space-between;padding:16px;border-bottom:1px solid var(--border)}
+    .container{max-width:900px;margin:0 auto;padding:16px}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px}
+    .hidden{display:none}
+    .btn{background:var(--primary);color:#fff;border:none;border-radius:8px;padding:10px 14px;cursor:pointer}
+    .btn.secondary{background:transparent;color:var(--text);border:1px solid var(--border)}
+    .btn.success{background:var(--success)}
+    .btn.link{background:transparent;color:var(--primary);border:none;padding:0}
+    .tabs{display:flex;gap:8px}
+    .day-type{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+    .diet-header{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+    .date-line{color:var(--muted)}
+    .meal{border-top:1px dashed var(--border);padding-top:12px;margin-top:12px}
+    .meal h3{margin:0 0 8px;cursor:pointer;display:flex;align-items:center;justify-content:space-between}
+    .meal h3 .toggle{font-size:14px;color:var(--muted)}
+    .items{display:grid;gap:6px}
+    .item{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+    .item .name{color:var(--text)}
+    .item .qty{color:var(--muted)}
+    .macros{font-size:14px;color:var(--muted)}
+    .totals{border-top:2px solid var(--border);margin-top:16px;padding-top:12px}
+    .totals .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+    .small{font-size:12px}
+    .muted{color:var(--muted)}
+    .actions{display:flex;align-items:center;gap:12px}
+    .notes{margin-top:12px}
+    .collapsed .items,.collapsed .macros{display:none}
+    .footer{padding:16px;border-top:1px solid var(--border);text-align:center;color:var(--muted)}
+    /* Modal */
+    .modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;padding:16px}
+    .modal .box{background:var(--card);border:1px solid var(--border);border-radius:12px;max-width:480px;width:100%;padding:16px}
+    .modal .actions{display:flex;justify-content:flex-end}
+    /* Calendar */
+    .calendar-controls{display:flex;align-items:center;justify-content:center;gap:12px}
+    .legend{display:flex;gap:16px;margin:10px 0}
+    .legend-item{display:flex;align-items:center;gap:6px;color:var(--muted)}
+    .dot{width:12px;height:12px;border-radius:50%;display:inline-block}
+    .dot.green{background:var(--success)}
+    .dot.yellow{background:var(--yellow)}
+    .calendar{display:grid;gap:6px}
+    .weekdays{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:6px}
+    .day{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center}
+    .day.green{outline:2px solid var(--success)}
+    .day.yellow{outline:2px solid var(--yellow)}
+    .day .num{font-weight:600}
+    @media (min-width:700px){.items{grid-template-columns:1fr 1fr}}
+  </style>
+</head>
+<body>
+  <header class="app-header">
+    <h1>Dieta do Maicon</h1>
+    <div class="tabs">
+      <button id="tab-plan" class="btn secondary">Plano</button>
+      <button id="tab-dashboard" class="btn secondary">Dashboard</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Plano -->
+    <section id="view-plan" class="card">
+      <h2>Selecione o tipo de dia</h2>
+      <div class="day-type">
+        <button class="btn" data-day="descanso">Descanso</button>
+        <button class="btn" data-day="1_treino">1 treino</button>
+        <button class="btn" data-day="2_treinos">2 treinos</button>
+      </div>
+
+      <section id="diet-section" class="card hidden">
+        <div class="diet-header">
+          <h3 id="day-label"></h3>
+          <div class="date-line">Data: <span id="today"></span></div>
+        </div>
+        <div id="meals"></div>
+        <div id="totals" class="totals"></div>
+        <div class="actions">
+          <button id="complete-day" class="btn success">Concluir dieta do dia</button>
+          <span id="complete-feedback" class="small muted"></span>
+        </div>
+        <details class="notes">
+          <summary>Observações</summary>
+          <ul>
+            <li>Creatina (5 g) contabilizada sem macros.</li>
+            <li>Salada entra com impacto mínimo (200 g padrão) — ajuste conforme sua porção.</li>
+            <li>Unidades: 1 ovo ≈ 50 g; 1 fatia de pão ≈ 30 g; 1 banana média ≈ 100 g.</li>
+          </ul>
+        </details>
+      </section>
+    </section>
+
+    <!-- Dashboard -->
+    <section id="view-dashboard" class="card hidden">
+      <div class="calendar-controls">
+        <button id="prev" class="btn">◀</button>
+        <h2 id="month-label"></h2>
+        <button id="next" class="btn">▶</button>
+      </div>
+      <div class="legend">
+        <span class="legend-item"><span class="dot green"></span> Concluído</span>
+        <span class="legend-item"><span class="dot yellow"></span> Não marcado</span>
+      </div>
+      <div class="weekdays">
+        <div class="small muted">Dom</div>
+        <div class="small muted">Seg</div>
+        <div class="small muted">Ter</div>
+        <div class="small muted">Qua</div>
+        <div class="small muted">Qui</div>
+        <div class="small muted">Sex</div>
+        <div class="small muted">Sáb</div>
+      </div>
+      <div id="calendar" class="calendar" style="grid-template-columns:repeat(7,1fr)"></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <small>© 2025 • Dieta do Maicon • Arquivo único • M365 Copilot</small>
+  </footer>
+
+  <!-- Modal -->
+  <div id="macro-modal" class="modal" aria-hidden="true" role="dialog">
+    <div class="box">
+      <h3>Detalhe de macros</h3>
+      <div id="modal-content"></div>
+      <div class="actions"><button id="modal-close" class="btn secondary">Fechar</button></div>
+    </div>
+  </div>
+
+  <script>
+    // ===== Dados nutricionais (por 100 g) e templates =====
+    const DB = {
+      nutrition: {
+        pao_integral: { label: 'Pão integral', kcal: 253, carb: 49.9, prot: 9.4, fat: 3.7 },
+        ovo: { label: 'Ovo inteiro', kcal: 143, carb: 1.6, prot: 13.0, fat: 8.9 },
+        banana: { label: 'Banana', kcal: 92, carb: 23.8, prot: 1.4, fat: 0.1 },
+        iogurte_natural: { label: 'Iogurte natural', kcal: 51, carb: 1.9, prot: 4.1, fat: 3.0 },
+        granola: { label: 'Granola', kcal: 408, carb: 72.39, prot: 9.22, fat: 11.03 },
+        frango_peito: { label: 'Peito de frango (cozido, sem pele)', kcal: 163, carb: 0.0, prot: 31.5, fat: 3.2 },
+        arroz_cozido: { label: 'Arroz cozido (tipo 1 / parboilizado)', kcal: 128, carb: 28.1, prot: 2.5, fat: 0.2 },
+        azeite: { label: 'Azeite de oliva extra virgem', kcal: 884, carb: 0.0, prot: 0.0, fat: 100.0 },
+        whey_concentrado: { label: 'Whey protein (concentrado)', kcal: 400, carb: 10.0, prot: 80.0, fat: 5.0 },
+        pasta_amendoim: { label: 'Pasta de amendoim', kcal: 588, carb: 19.97, prot: 24.47, fat: 49.84 },
+        cafe: { label: 'Café preto (sem açúcar)', kcal: 0, carb: 0.0, prot: 0.0, fat: 0.0 },
+        salada: { label: 'Salada (rúcula, alface, tomate, pepino etc.)', kcal: 20, carb: 3.5, prot: 1.0, fat: 0.2 },
+        creatina: { label: 'Creatina', kcal: 0, carb: 0.0, prot: 0.0, fat: 0.0 }
+      },
+      conversions: { fatia: 30, ovo: 50, banana: 100 },
+      templates: {
+        descanso: {
+          label: 'Dia de descanso',
+          meals: [
+            { time: '07:00', name: 'Café da manhã', items: [
+              { food: 'pao_integral', qty: 2, unit: 'fatia' },
+              { food: 'pasta_amendoim', qty: 10, unit: 'g' },
+              { food: 'ovo', qty: 3, unit: 'ovo' },
+              { food: 'banana', qty: 1, unit: 'banana' },
+              { food: 'cafe', qty: 200, unit: 'ml' }
+            ]},
+            { time: '10:00', name: 'Lanche da manhã', items: [
+              { food: 'iogurte_natural', qty: 200, unit: 'g' },
+              { food: 'granola', qty: 30, unit: 'g' },
+              { food: 'whey_concentrado', qty: 15, unit: 'g' }
+            ]},
+            { time: '13:00', name: 'Almoço', items: [
+              { food: 'frango_peito', qty: 250, unit: 'g' },
+              { food: 'arroz_cozido', qty: 100, unit: 'g' },
+              { food: 'salada', qty: 200, unit: 'g' },
+              { food: 'azeite', qty: 10, unit: 'g' }
+            ]},
+            { time: '16:30', name: 'Café da tarde', items: [
+              { food: 'ovo', qty: 2, unit: 'ovo' },
+              { food: 'pao_integral', qty: 1, unit: 'fatia' },
+              { food: 'pasta_amendoim', qty: 10, unit: 'g' },
+              { food: 'whey_concentrado', qty: 25, unit: 'g' },
+              { food: 'creatina', qty: 5, unit: 'g' }
+            ]},
+            { time: '20:00', name: 'Jantar', items: [
+              { food: 'frango_peito', qty: 250, unit: 'g' },
+              { food: 'arroz_cozido', qty: 80, unit: 'g' },
+              { food: 'salada', qty: 200, unit: 'g' },
+              { food: 'azeite', qty: 10, unit: 'g' }
+            ]}
+          ]
+        },
+        '1_treino': {
+          label: 'Dia com 1 treino',
+          meals: [
+            { time: '07:00', name: 'Café da manhã', items: [
+              { food: 'pao_integral', qty: 3, unit: 'fatia' },
+              { food: 'pasta_amendoim', qty: 10, unit: 'g' },
+              { food: 'ovo', qty: 3, unit: 'ovo' },
+              { food: 'banana', qty: 1, unit: 'banana' },
+              { food: 'cafe', qty: 200, unit: 'ml' }
+            ]},
+            { time: '10:00', name: 'Lanche da manhã (pré-JJ)', items: [
+              { food: 'iogurte_natural', qty: 200, unit: 'g' },
+              { food: 'granola', qty: 30, unit: 'g' },
+              { food: 'banana', qty: 1, unit: 'banana' },
+              { food: 'whey_concentrado', qty: 15, unit: 'g' }
+            ]},
+            { time: '13:00', name: 'Almoço (pós-JJ)', items: [
+              { food: 'frango_peito', qty: 250, unit: 'g' },
+              { food: 'arroz_cozido', qty: 150, unit: 'g' },
+              { food: 'salada', qty: 200, unit: 'g' },
+              { food: 'azeite', qty: 10, unit: 'g' }
+            ]},
+            { time: '16:30', name: 'Café da tarde', items: [
+              { food: 'ovo', qty: 2, unit: 'ovo' },
+              { food: 'pao_integral', qty: 2, unit: 'fatia' },
+              { food: 'pasta_amendoim', qty: 15, unit: 'g' },
+              { food: 'whey_concentrado', qty: 30, unit: 'g' },
+              { food: 'creatina', qty: 5, unit: 'g' }
+            ]},
+            { time: '20:00', name: 'Jantar', items: [
+              { food: 'frango_peito', qty: 250, unit: 'g' },
+              { food: 'arroz_cozido', qty: 100, unit: 'g' },
+              { food: 'salada', qty: 200, unit: 'g' },
+              { food: 'azeite', qty: 10, unit: 'g' }
+            ]}
+          ]
+        },
+        '2_treinos': {
+          label: 'Dia com 2 treinos',
+          meals: [
+            { time: '07:00', name: 'Café da manhã', items: [
+              { food: 'pao_integral', qty: 3, unit: 'fatia' },
+              { food: 'pasta_amendoim', qty: 10, unit: 'g' },
+              { food: 'ovo', qty: 3, unit: 'ovo' },
+              { food: 'banana', qty: 1, unit: 'banana' },
+              { food: 'cafe', qty: 200, unit: 'ml' }
+            ]},
+            { time: '10:00', name: 'Lanche da manhã (pré-JJ)', items: [
+              { food: 'iogurte_natural', qty: 200, unit: 'g' },
+              { food: 'granola', qty: 30, unit: 'g' },
+              { food: 'banana', qty: 1, unit: 'banana' },
+              { food: 'whey_concentrado', qty: 15, unit: 'g' }
+            ]},
+            { time: '13:00', name: 'Almoço (pós-JJ)', items: [
+              { food: 'frango_peito', qty: 250, unit: 'g' },
+              { food: 'arroz_cozido', qty: 200, unit: 'g' },
+              { food: 'salada', qty: 200, unit: 'g' },
+              { food: 'azeite', qty: 10, unit: 'g' }
+            ]},
+            { time: '16:30', name: 'Café da tarde (pré-musculação)', items: [
+              { food: 'ovo', qty: 2, unit: 'ovo' },
+              { food: 'pao_integral', qty: 2, unit: 'fatia' },
+              { food: 'pasta_amendoim', qty: 15, unit: 'g' },
+              { food: 'banana', qty: 1, unit: 'banana' },
+              { food: 'whey_concentrado', qty: 30, unit: 'g' },
+              { food: 'creatina', qty: 5, unit: 'g' }
+            ]},
+            { time: '20:00', name: 'Jantar (pós-musculação)', items: [
+              { food: 'frango_peito', qty: 250, unit: 'g' },
+              { food: 'arroz_cozido', qty: 100, unit: 'g' },
+              { food: 'salada', qty: 200, unit: 'g' },
+              { food: 'azeite', qty: 10, unit: 'g' }
+            ]}
+          ]
+        }
+      }
+    };
+
+    // ===== Utilitários =====
+    const unitToGrams = { g:v=>v, ml:v=>0, fatia:v=>v*DB.conversions.fatia, ovo:v=>v*DB.conversions.ovo, banana:v=>v*DB.conversions.banana };
+    const round = (n,d=1)=> Math.round(n*Math.pow(10,d))/Math.pow(10,d);
+    const add = (a,b)=> ({kcal:a.kcal+b.kcal, carb:a.carb+b.carb, prot:a.prot+b.prot, fat:a.fat+b.fat});
+    function computeItemMacros(id, grams){ const f=DB.nutrition[id]; const k=grams/100.0; return {kcal:f.kcal*k, carb:f.carb*k, prot:f.prot*k, fat:f.fat*k}; }
+    const pad = n => (n<10? '0'+n : n);
+    const todayStr = ()=>{ const d=new Date(); return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; };
+
+    // ===== Plano: renderização =====
+    function renderDay(key){
+      const tpl = DB.templates[key];
+      const section = document.getElementById('diet-section');
+      section.classList.remove('hidden');
+      document.getElementById('day-label').textContent = tpl.label;
+      document.getElementById('today').textContent = new Date().toLocaleDateString('pt-BR');
+
+      const mealsEl = document.getElementById('meals');
+      mealsEl.innerHTML = '';
+      let total = {kcal:0, carb:0, prot:0, fat:0};
+
+      tpl.meals.forEach(meal => {
+        let mealTotals = {kcal:0, carb:0, prot:0, fat:0};
+        const m = document.createElement('div');
+        m.className = 'meal';
+        m.innerHTML = `<h3>${meal.time} • ${meal.name}<span class="toggle">(toque para expandir/retrair)</span></h3>`;
+        const itemsEl = document.createElement('div'); itemsEl.className='items';
+        meal.items.forEach(it => {
+          const grams = (unitToGrams[it.unit]||unitToGrams['g'])(it.qty);
+          const macros = computeItemMacros(it.food, grams);
+          mealTotals = add(mealTotals, macros);
+          const itemEl = document.createElement('div');
+          itemEl.className = 'item';
+          const label = DB.nutrition[it.food]?.label || it.food;
+          const qtyLabel = (it.unit==='g'||it.unit==='ml') ? `${it.qty}${it.unit}` : `${it.qty} ${it.unit}`;
+          itemEl.innerHTML = `<span class="name">${label}</span><span class="qty">${qtyLabel}</span>`;
+          itemsEl.appendChild(itemEl);
+          itemEl.addEventListener('click', ()=>{
+            const detail = `<p><strong>${label}</strong></p><p>Quantidade: ${qtyLabel}</p><p>Macros: kcal ${round(macros.kcal)} • carbo ${round(macros.carb)} g • proteína ${round(macros.prot)} g • gordura ${round(macros.fat)} g</p>`;
+            showModal(detail);
+          });
+        });
+        const macrosEl = document.createElement('div'); macrosEl.className='macros';
+        macrosEl.textContent = `Macros da refeição • kcal: ${round(mealTotals.kcal)} • carbo: ${round(mealTotals.carb)} g • proteína: ${round(mealTotals.prot)} g • gordura: ${round(mealTotals.fat)} g`;
+        m.appendChild(itemsEl); m.appendChild(macrosEl);
+        m.querySelector('h3').addEventListener('click', ()=>{ m.classList.toggle('collapsed'); });
+        mealsEl.appendChild(m);
+        total = add(total, mealTotals);
+      });
+
+      document.getElementById('totals').innerHTML = `<h3>Total do dia</h3><div class="grid">
+        <div><strong>${round(total.kcal)}</strong><div class="small muted">kcal</div></div>
+        <div><strong>${round(total.carb)}</strong><div class="small muted">carbo (g)</div></div>
+        <div><strong>${round(total.prot)}</strong><div class="small muted">proteína (g)</div></div>
+        <div><strong>${round(total.fat)}</strong><div class="small muted">gordura (g)</div></div>
+      </div>`;
+    }
+
+    // ===== Modal =====
+    function showModal(html){ const modal=document.getElementById('macro-modal'); document.getElementById('modal-content').innerHTML=html; modal.style.display='flex'; }
+    document.getElementById('modal-close').addEventListener('click', ()=>{ document.getElementById('macro-modal').style.display='none'; });
+    document.getElementById('macro-modal').addEventListener('click', (e)=>{ if(e.target.id==='macro-modal') e.currentTarget.style.display='none'; });
+
+    // ===== Completar dia =====
+    document.getElementById('complete-day').addEventListener('click', ()=>{
+      const key='dietCompletedDates';
+      const raw = localStorage.getItem(key);
+      const arr = raw? JSON.parse(raw) : [];
+      const t = todayStr();
+      if(!arr.includes(t)) arr.push(t);
+      localStorage.setItem(key, JSON.stringify(arr));
+      document.getElementById('complete-feedback').textContent = 'Concluído! Dia marcado no calendário.';
+    });
+
+    // ===== Dashboard (calendário) =====
+    function getCompleted(){ const raw=localStorage.getItem('dietCompletedDates'); return raw? JSON.parse(raw) : []; }
+    function buildCalendar(year, month){
+      const first = new Date(year, month, 1);
+      const last = new Date(year, month+1, 0);
+      const startWeekday = first.getDay(); // 0=Dom pelo locale? JS usa 0=Dom
+      const days = last.getDate();
+      const grid = document.getElementById('calendar');
+      grid.innerHTML='';
+      const completed = new Set(getCompleted());
+      // Padding inicial
+      for(let i=0;i<startWeekday;i++){ const p=document.createElement('div'); p.className='day'; grid.appendChild(p); }
+      for(let d=1; d<=days; d++){
+        const cell = document.createElement('div');
+        const dateStr = `${year}-${pad(month+1)}-${pad(d)}`;
+        const marked = completed.has(dateStr);
+        cell.className = 'day ' + (marked? 'green':'yellow');
+        cell.innerHTML = `<div class="num">${d}</div><div class="small muted">${marked? 'Concluído':'—'}</div>`;
+        grid.appendChild(cell);
+      }
+      document.getElementById('month-label').textContent = new Date(year, month, 1).toLocaleDateString('pt-BR',{month:'long', year:'numeric'});
+    }
+    (function(){
+      const now = new Date(); let y=now.getFullYear(); let m=now.getMonth();
+      function update(){ buildCalendar(y,m); }
+      document.getElementById('prev').addEventListener('click', ()=>{ m--; if(m<0){ m=11; y--; } update(); });
+      document.getElementById('next').addEventListener('click', ()=>{ m++; if(m>11){ m=0; y++; } update(); });
+      update();
+    })();
+
+    // ===== Tabs =====
+    const showPlan = ()=>{ document.getElementById('view-plan').classList.remove('hidden'); document.getElementById('view-dashboard').classList.add('hidden'); };
+    const showDash = ()=>{ document.getElementById('view-dashboard').classList.remove('hidden'); document.getElementById('view-plan').classList.add('hidden'); };
+    document.getElementById('tab-plan').addEventListener('click', showPlan);
+    document.getElementById('tab-dashboard').addEventListener('click', showDash);
+
+    // ===== Inicialização =====
+    document.querySelectorAll('.day-type .btn').forEach(b=>{
+      b.addEventListener('click', ()=> renderDay(b.dataset.day));
+    });
+    document.getElementById('today').textContent = new Date().toLocaleDateString('pt-BR');
+    showPlan();
+  </script>
+</body>
+</html>
