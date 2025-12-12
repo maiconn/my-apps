@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Dieta do Maicon – App (arquivo único)</title>
+  <title>Dieta do Maicon – App (v3 arquivo único)</title>
   <style>
-    :root{--bg:#0f1115;--card:#1a1f27;--text:#e6e6e6;--muted:#a7a7a7;--primary:#4f7cff;--success:#2ecc71;--yellow:#f1c40f;--border:#2b2f36}
+    :root{--bg:#0f1115;--card:#1a1f27;--text:#e6e6e6;--muted:#a7a7a7;--primary:#4f7cff;--success:#2ecc71;--yellow:#f1c40f;--alert:#e74c3c;--border:#2b2f36}
     *{box-sizing:border-box}
     body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial,"Noto Sans",sans-serif;background:var(--bg);color:var(--text)}
     a{color:var(--primary);text-decoration:none}
@@ -50,10 +50,17 @@
     .dot.yellow{background:var(--yellow)}
     .calendar{display:grid;gap:6px}
     .weekdays{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:6px}
-    .day{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center}
+    .day{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center;cursor:pointer}
     .day.green{outline:2px solid var(--success)}
     .day.yellow{outline:2px solid var(--yellow)}
     .day .num{font-weight:600}
+    .day .menu{margin-top:6px}
+    .day .menu .mini{font-size:11px;border:1px solid var(--border);background:transparent;color:var(--text);border-radius:6px;padding:4px 6px;cursor:pointer}
+    .progress{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+    .progress .label{font-weight:600}
+    .progress .percent{padding:6px 10px;border-radius:8px;border:1px solid var(--border)}
+    .percent.ok{background:rgba(46,204,113,0.15);color:#2ecc71}
+    .percent.alert{background:rgba(231,76,60,0.15);color:#e74c3c}
     @media (min-width:700px){.items{grid-template-columns:1fr 1fr}}
   </style>
 </head>
@@ -100,6 +107,10 @@
 
     <!-- Dashboard -->
     <section id="view-dashboard" class="card hidden">
+      <div class="progress">
+        <div class="label">Progresso desde <span id="start-label"></span>:</div>
+        <div id="progress-percent" class="percent">0%</div>
+      </div>
       <div class="calendar-controls">
         <button id="prev" class="btn">◀</button>
         <h2 id="month-label"></h2>
@@ -136,6 +147,9 @@
   </div>
 
   <script>
+    // ===== Configurações =====
+    const START_DATE = '2025-12-11'; // dieta começou em 11/12/2025
+
     // ===== Dados nutricionais (por 100 g) e templates =====
     const DB = {
       nutrition: {
@@ -151,43 +165,47 @@
         pasta_amendoim: { label: 'Pasta de amendoim', kcal: 588, carb: 19.97, prot: 24.47, fat: 49.84 },
         cafe: { label: 'Café preto (sem açúcar)', kcal: 0, carb: 0.0, prot: 0.0, fat: 0.0 },
         salada: { label: 'Salada (rúcula, alface, tomate, pepino etc.)', kcal: 20, carb: 3.5, prot: 1.0, fat: 0.2 },
-        creatina: { label: 'Creatina', kcal: 0, carb: 0.0, prot: 0.0, fat: 0.0 }
+        creatina: { label: 'Creatina', kcal: 0, carb: 0.0, prot: 0.0, fat: 0.0 },
+        fruta_media: { label: 'Fruta (equivalência média 100 g)', kcal: 50, carb: 13, prot: 0, fat: 0 }
       },
       conversions: { fatia: 30, ovo: 50, banana: 100 },
       templates: {
+        // Ajustes finais + fruta 100 g após almoço e jantar
         descanso: {
           label: 'Dia de descanso',
           meals: [
             { time: '07:00', name: 'Café da manhã', items: [
               { food: 'pao_integral', qty: 2, unit: 'fatia' },
-              { food: 'pasta_amendoim', qty: 10, unit: 'g' },
-              { food: 'ovo', qty: 3, unit: 'ovo' },
+              { food: 'pasta_amendoim', qty: 8, unit: 'g' },
+              { food: 'ovo', qty: 2, unit: 'ovo' },
               { food: 'banana', qty: 1, unit: 'banana' },
               { food: 'cafe', qty: 200, unit: 'ml' }
             ]},
             { time: '10:00', name: 'Lanche da manhã', items: [
               { food: 'iogurte_natural', qty: 200, unit: 'g' },
-              { food: 'granola', qty: 30, unit: 'g' },
+              { food: 'granola', qty: 25, unit: 'g' },
               { food: 'whey_concentrado', qty: 15, unit: 'g' }
             ]},
             { time: '13:00', name: 'Almoço', items: [
-              { food: 'frango_peito', qty: 250, unit: 'g' },
+              { food: 'frango_peito', qty: 180, unit: 'g' },
               { food: 'arroz_cozido', qty: 100, unit: 'g' },
               { food: 'salada', qty: 200, unit: 'g' },
-              { food: 'azeite', qty: 10, unit: 'g' }
+              { food: 'azeite', qty: 8, unit: 'g' },
+              { food: 'fruta_media', qty: 100, unit: 'g' }
             ]},
             { time: '16:30', name: 'Café da tarde', items: [
-              { food: 'ovo', qty: 2, unit: 'ovo' },
+              { food: 'ovo', qty: 1, unit: 'ovo' },
               { food: 'pao_integral', qty: 1, unit: 'fatia' },
               { food: 'pasta_amendoim', qty: 10, unit: 'g' },
-              { food: 'whey_concentrado', qty: 25, unit: 'g' },
+              { food: 'whey_concentrado', qty: 15, unit: 'g' },
               { food: 'creatina', qty: 5, unit: 'g' }
             ]},
             { time: '20:00', name: 'Jantar', items: [
-              { food: 'frango_peito', qty: 250, unit: 'g' },
+              { food: 'frango_peito', qty: 180, unit: 'g' },
               { food: 'arroz_cozido', qty: 80, unit: 'g' },
               { food: 'salada', qty: 200, unit: 'g' },
-              { food: 'azeite', qty: 10, unit: 'g' }
+              { food: 'azeite', qty: 8, unit: 'g' },
+              { food: 'fruta_media', qty: 100, unit: 'g' }
             ]}
           ]
         },
@@ -197,7 +215,7 @@
             { time: '07:00', name: 'Café da manhã', items: [
               { food: 'pao_integral', qty: 3, unit: 'fatia' },
               { food: 'pasta_amendoim', qty: 10, unit: 'g' },
-              { food: 'ovo', qty: 3, unit: 'ovo' },
+              { food: 'ovo', qty: 2, unit: 'ovo' },
               { food: 'banana', qty: 1, unit: 'banana' },
               { food: 'cafe', qty: 200, unit: 'ml' }
             ]},
@@ -208,23 +226,25 @@
               { food: 'whey_concentrado', qty: 15, unit: 'g' }
             ]},
             { time: '13:00', name: 'Almoço (pós-JJ)', items: [
-              { food: 'frango_peito', qty: 250, unit: 'g' },
-              { food: 'arroz_cozido', qty: 150, unit: 'g' },
+              { food: 'frango_peito', qty: 200, unit: 'g' },
+              { food: 'arroz_cozido', qty: 180, unit: 'g' },
               { food: 'salada', qty: 200, unit: 'g' },
-              { food: 'azeite', qty: 10, unit: 'g' }
+              { food: 'azeite', qty: 10, unit: 'g' },
+              { food: 'fruta_media', qty: 100, unit: 'g' }
             ]},
             { time: '16:30', name: 'Café da tarde', items: [
-              { food: 'ovo', qty: 2, unit: 'ovo' },
+              { food: 'ovo', qty: 1, unit: 'ovo' },
               { food: 'pao_integral', qty: 2, unit: 'fatia' },
               { food: 'pasta_amendoim', qty: 15, unit: 'g' },
-              { food: 'whey_concentrado', qty: 30, unit: 'g' },
+              { food: 'whey_concentrado', qty: 20, unit: 'g' },
               { food: 'creatina', qty: 5, unit: 'g' }
             ]},
             { time: '20:00', name: 'Jantar', items: [
-              { food: 'frango_peito', qty: 250, unit: 'g' },
-              { food: 'arroz_cozido', qty: 100, unit: 'g' },
+              { food: 'frango_peito', qty: 180, unit: 'g' },
+              { food: 'arroz_cozido', qty: 120, unit: 'g' },
               { food: 'salada', qty: 200, unit: 'g' },
-              { food: 'azeite', qty: 10, unit: 'g' }
+              { food: 'azeite', qty: 10, unit: 'g' },
+              { food: 'fruta_media', qty: 100, unit: 'g' }
             ]}
           ]
         },
@@ -234,7 +254,7 @@
             { time: '07:00', name: 'Café da manhã', items: [
               { food: 'pao_integral', qty: 3, unit: 'fatia' },
               { food: 'pasta_amendoim', qty: 10, unit: 'g' },
-              { food: 'ovo', qty: 3, unit: 'ovo' },
+              { food: 'ovo', qty: 2, unit: 'ovo' },
               { food: 'banana', qty: 1, unit: 'banana' },
               { food: 'cafe', qty: 200, unit: 'ml' }
             ]},
@@ -245,24 +265,26 @@
               { food: 'whey_concentrado', qty: 15, unit: 'g' }
             ]},
             { time: '13:00', name: 'Almoço (pós-JJ)', items: [
-              { food: 'frango_peito', qty: 250, unit: 'g' },
-              { food: 'arroz_cozido', qty: 200, unit: 'g' },
+              { food: 'frango_peito', qty: 210, unit: 'g' },
+              { food: 'arroz_cozido', qty: 230, unit: 'g' },
               { food: 'salada', qty: 200, unit: 'g' },
-              { food: 'azeite', qty: 10, unit: 'g' }
+              { food: 'azeite', qty: 10, unit: 'g' },
+              { food: 'fruta_media', qty: 100, unit: 'g' }
             ]},
             { time: '16:30', name: 'Café da tarde (pré-musculação)', items: [
-              { food: 'ovo', qty: 2, unit: 'ovo' },
+              { food: 'ovo', qty: 1, unit: 'ovo' },
               { food: 'pao_integral', qty: 2, unit: 'fatia' },
               { food: 'pasta_amendoim', qty: 15, unit: 'g' },
               { food: 'banana', qty: 1, unit: 'banana' },
-              { food: 'whey_concentrado', qty: 30, unit: 'g' },
+              { food: 'whey_concentrado', qty: 25, unit: 'g' },
               { food: 'creatina', qty: 5, unit: 'g' }
             ]},
             { time: '20:00', name: 'Jantar (pós-musculação)', items: [
-              { food: 'frango_peito', qty: 250, unit: 'g' },
-              { food: 'arroz_cozido', qty: 100, unit: 'g' },
+              { food: 'frango_peito', qty: 180, unit: 'g' },
+              { food: 'arroz_cozido', qty: 130, unit: 'g' },
               { food: 'salada', qty: 200, unit: 'g' },
-              { food: 'azeite', qty: 10, unit: 'g' }
+              { food: 'azeite', qty: 10, unit: 'g' },
+              { food: 'fruta_media', qty: 100, unit: 'g' }
             ]}
           ]
         }
@@ -293,7 +315,7 @@
         let mealTotals = {kcal:0, carb:0, prot:0, fat:0};
         const m = document.createElement('div');
         m.className = 'meal';
-        m.innerHTML = `<h3>${meal.time} • ${meal.name}<span class="toggle">(toque para expandir/retrair)</span></h3>`;
+        m.innerHTML = `<h3>${meal.time} • ${meal.name}<span class=\"toggle\">(toque para expandir/retrair)</span></h3>`;
         const itemsEl = document.createElement('div'); itemsEl.className='items';
         meal.items.forEach(it => {
           const grams = (unitToGrams[it.unit]||unitToGrams['g'])(it.qty);
@@ -303,7 +325,7 @@
           itemEl.className = 'item';
           const label = DB.nutrition[it.food]?.label || it.food;
           const qtyLabel = (it.unit==='g'||it.unit==='ml') ? `${it.qty}${it.unit}` : `${it.qty} ${it.unit}`;
-          itemEl.innerHTML = `<span class="name">${label}</span><span class="qty">${qtyLabel}</span>`;
+          itemEl.innerHTML = `<span class=\"name\">${label}</span><span class=\"qty\">${qtyLabel}</span>`;
           itemsEl.appendChild(itemEl);
           itemEl.addEventListener('click', ()=>{
             const detail = `<p><strong>${label}</strong></p><p>Quantidade: ${qtyLabel}</p><p>Macros: kcal ${round(macros.kcal)} • carbo ${round(macros.carb)} g • proteína ${round(macros.prot)} g • gordura ${round(macros.fat)} g</p>`;
@@ -318,12 +340,7 @@
         total = add(total, mealTotals);
       });
 
-      document.getElementById('totals').innerHTML = `<h3>Total do dia</h3><div class="grid">
-        <div><strong>${round(total.kcal)}</strong><div class="small muted">kcal</div></div>
-        <div><strong>${round(total.carb)}</strong><div class="small muted">carbo (g)</div></div>
-        <div><strong>${round(total.prot)}</strong><div class="small muted">proteína (g)</div></div>
-        <div><strong>${round(total.fat)}</strong><div class="small muted">gordura (g)</div></div>
-      </div>`;
+      document.getElementById('totals').innerHTML = `<h3>Total do dia</h3><div class=\"grid\"><div><strong>${round(total.kcal)}</strong><div class=\"small muted\">kcal</div></div><div><strong>${round(total.carb)}</strong><div class=\"small muted\">carbo (g)</div></div><div><strong>${round(total.prot)}</strong><div class=\"small muted\">proteína (g)</div></div><div><strong>${round(total.fat)}</strong><div class=\"small muted\">gordura (g)</div></div></div>`;
     }
 
     // ===== Modal =====
@@ -331,57 +348,114 @@
     document.getElementById('modal-close').addEventListener('click', ()=>{ document.getElementById('macro-modal').style.display='none'; });
     document.getElementById('macro-modal').addEventListener('click', (e)=>{ if(e.target.id==='macro-modal') e.currentTarget.style.display='none'; });
 
-    // ===== Completar dia =====
+    // ===== Completar dia via botão do plano =====
     document.getElementById('complete-day').addEventListener('click', ()=>{
-      const key='dietCompletedDates';
-      const raw = localStorage.getItem(key);
-      const arr = raw? JSON.parse(raw) : [];
-      const t = todayStr();
-      if(!arr.includes(t)) arr.push(t);
-      localStorage.setItem(key, JSON.stringify(arr));
+      toggleMark(todayStr(), true); // marca hoje como concluído
       document.getElementById('complete-feedback').textContent = 'Concluído! Dia marcado no calendário.';
+      // Atualiza progresso se dashboard estiver aberto
+      updateProgress(); buildCalendar(currentYear, currentMonth);
     });
 
     // ===== Dashboard (calendário) =====
     function getCompleted(){ const raw=localStorage.getItem('dietCompletedDates'); return raw? JSON.parse(raw) : []; }
+    function setCompleted(arr){ localStorage.setItem('dietCompletedDates', JSON.stringify(arr)); }
+
+    function toggleMark(dateStr, mark){
+      const arr = getCompleted();
+      const idx = arr.indexOf(dateStr);
+      if(mark){ if(idx<0){ arr.push(dateStr); setCompleted(arr); } }
+      else { if(idx>=0){ arr.splice(idx,1); setCompleted(arr); } }
+    }
+
+    // Progresso desde START_DATE até hoje
+    function updateProgress(){
+      const start = new Date(START_DATE+'T00:00:00');
+      const today = new Date(); today.setHours(0,0,0,0);
+      const oneDay = 24*60*60*1000;
+      const elapsedDays = Math.floor((today - start)/oneDay) + 1; // incluir hoje
+      const completed = getCompleted().filter(d=>{
+        const dt = new Date(d+'T00:00:00');
+        return dt >= start && dt <= today;
+      }).length;
+      const pct = elapsedDays>0 ? Math.round((completed/elapsedDays)*100) : 0;
+      const box = document.getElementById('progress-percent');
+      box.textContent = `${pct}% (${completed}/${elapsedDays} dias)`;
+      box.classList.remove('ok','alert');
+      if(pct >= 80) box.classList.add('ok'); else box.classList.add('alert');
+      document.getElementById('start-label').textContent = new Date(START_DATE+'T00:00:00').toLocaleDateString('pt-BR');
+    }
+
+    let currentYear = new Date().getFullYear();
+    let currentMonth = new Date().getMonth();
+
     function buildCalendar(year, month){
       const first = new Date(year, month, 1);
       const last = new Date(year, month+1, 0);
-      const startWeekday = first.getDay(); // 0=Dom pelo locale? JS usa 0=Dom
+      const startWeekday = first.getDay(); // 0=Dom
       const days = last.getDate();
       const grid = document.getElementById('calendar');
       grid.innerHTML='';
-      const completed = new Set(getCompleted());
+      const completedSet = new Set(getCompleted());
+
       // Padding inicial
       for(let i=0;i<startWeekday;i++){ const p=document.createElement('div'); p.className='day'; grid.appendChild(p); }
+
       for(let d=1; d<=days; d++){
-        const cell = document.createElement('div');
         const dateStr = `${year}-${pad(month+1)}-${pad(d)}`;
-        const marked = completed.has(dateStr);
+        const marked = completedSet.has(dateStr);
+        const cell = document.createElement('div');
         cell.className = 'day ' + (marked? 'green':'yellow');
-        cell.innerHTML = `<div class="num">${d}</div><div class="small muted">${marked? 'Concluído':'—'}</div>`;
+        cell.innerHTML = `<div class=\"num\">${d}</div>`;
+
+        // Mini menu
+        const menu = document.createElement('div');
+        menu.className = 'menu';
+        const btn = document.createElement('button');
+        btn.className = 'mini';
+        btn.textContent = marked? 'Excluir marcação' : 'Marcar concluído';
+        btn.addEventListener('click', (e)=>{
+          e.stopPropagation();
+          if(marked){
+            if(confirm(`Remover marcação de ${dateStr}?`)) { toggleMark(dateStr, false); }
+          } else {
+            if(confirm(`Marcar ${dateStr} como concluído?`)) { toggleMark(dateStr, true); }
+          }
+          updateProgress(); buildCalendar(year, month);
+        });
+        menu.appendChild(btn);
+        cell.appendChild(menu);
+
+        // Clique direto também alterna com confirmação
+        cell.addEventListener('click', ()=>{
+          if(marked){
+            if(confirm(`Remover marcação de ${dateStr}?`)) { toggleMark(dateStr, false); }
+          } else {
+            if(confirm(`Marcar ${dateStr} como concluído?`)) { toggleMark(dateStr, true); }
+          }
+          updateProgress(); buildCalendar(year, month);
+        });
+
         grid.appendChild(cell);
       }
       document.getElementById('month-label').textContent = new Date(year, month, 1).toLocaleDateString('pt-BR',{month:'long', year:'numeric'});
     }
+
     (function(){
-      const now = new Date(); let y=now.getFullYear(); let m=now.getMonth();
-      function update(){ buildCalendar(y,m); }
-      document.getElementById('prev').addEventListener('click', ()=>{ m--; if(m<0){ m=11; y--; } update(); });
-      document.getElementById('next').addEventListener('click', ()=>{ m++; if(m>11){ m=0; y++; } update(); });
+      const now = new Date(); currentYear=now.getFullYear(); currentMonth=now.getMonth();
+      function update(){ updateProgress(); buildCalendar(currentYear, currentMonth); }
+      document.getElementById('prev').addEventListener('click', ()=>{ currentMonth--; if(currentMonth<0){ currentMonth=11; currentYear--; } update(); });
+      document.getElementById('next').addEventListener('click', ()=>{ currentMonth++; if(currentMonth>11){ currentMonth=0; currentYear++; } update(); });
       update();
     })();
 
     // ===== Tabs =====
     const showPlan = ()=>{ document.getElementById('view-plan').classList.remove('hidden'); document.getElementById('view-dashboard').classList.add('hidden'); };
-    const showDash = ()=>{ document.getElementById('view-dashboard').classList.remove('hidden'); document.getElementById('view-plan').classList.add('hidden'); };
+    const showDash = ()=>{ document.getElementById('view-dashboard').classList.remove('hidden'); document.getElementById('view-plan').classList.add('hidden'); updateProgress(); buildCalendar(currentYear, currentMonth); };
     document.getElementById('tab-plan').addEventListener('click', showPlan);
     document.getElementById('tab-dashboard').addEventListener('click', showDash);
 
     // ===== Inicialização =====
-    document.querySelectorAll('.day-type .btn').forEach(b=>{
-      b.addEventListener('click', ()=> renderDay(b.dataset.day));
-    });
+    document.querySelectorAll('.day-type .btn').forEach(b=>{ b.addEventListener('click', ()=> renderDay(b.dataset.day)); });
     document.getElementById('today').textContent = new Date().toLocaleDateString('pt-BR');
     showPlan();
   </script>
