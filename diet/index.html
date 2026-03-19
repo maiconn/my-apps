@@ -428,7 +428,7 @@
 
   <div id="day-modal" class="modal">
     <div class="box">
-      <h3>Concluir dia</h3>
+      <h3 id="day-modal-title">Concluir dia</h3>
 
       <label>Dieta usada</label>
       <select id="diet-select" class="btn secondary">
@@ -443,6 +443,7 @@
       <input id="kcal-input" class="btn secondary" type="number" />
 
       <div class="actions">
+        <button id="modal-close-day" class="btn secondary">Fechar</button>
         <button id="remove-day" class="btn secondary">Remover</button>
         <button id="save-day" class="btn success">OK</button>
       </div>
@@ -753,7 +754,9 @@
     // ===== Modal =====
     function showModal(html) { const modal = document.getElementById('macro-modal'); document.getElementById('modal-content').innerHTML = html; modal.style.display = 'flex'; }
     document.getElementById('modal-close').addEventListener('click', () => { document.getElementById('macro-modal').style.display = 'none'; });
+    document.getElementById('modal-close-day').addEventListener('click', () => { closeDayModal(); });
     document.getElementById('macro-modal').addEventListener('click', (e) => { if (e.target.id === 'macro-modal') e.currentTarget.style.display = 'none'; });
+
 
     // ===== Completar dia via botão do plano =====
     document.getElementById('complete-day').addEventListener('click', () => {
@@ -887,6 +890,25 @@
 
     function openDayModal(dateStr) {
       selectedDate = dateStr;
+      const logs = getDailyLogs();
+      const existing = logs[dateStr];
+      const select = document.getElementById('diet-select');
+      const kcalInput = document.getElementById('kcal-input');
+      const title = document.getElementById('day-modal-title') || document.querySelector('#day-modal h3');
+
+      if (existing) {
+        select.value = existing.type || '';
+        kcalInput.value = existing.kcal != null ? existing.kcal : '';
+        if (title) title.textContent = `Editar dia ${new Date(dateStr + 'T00:00:00').toLocaleDateString('pt-BR')}`;
+      } else {
+        select.value = '';
+        kcalInput.value = '';
+        if (title) title.textContent = `Concluir dia ${new Date(dateStr + 'T00:00:00').toLocaleDateString('pt-BR')}`;
+      }
+
+      const removeBtn = document.getElementById('remove-day');
+      if (removeBtn) removeBtn.disabled = !existing;
+
       document.getElementById('day-modal').style.display = 'flex';
     }
 
@@ -940,15 +962,36 @@
 
     let currentWeek = null;
 
+
     function openWeekModal(wk) {
       currentWeek = wk;
+
+      // 1) Continua exibindo as kcal da semana (como já faz hoje)
       const kcal = getWeekCalories(wk);
       document.getElementById('week-kcal').textContent =
         `Total semanal: ${kcal} kcal`;
+
+      // 2) NOVO: buscar o log semanal e preencher/limpar o peso
+      const logs = getWeeklyLogs();               // lê do localStorage
+      const existing = logs[wk];                  // entrada da semana atual (se houver)
+      const weightInput = document.getElementById('week-weight');
+
+      // Se houver registro com 'weight', preenche; senão, limpa
+      weightInput.value = (existing && existing.weight != null)
+        ? existing.weight
+        : '';
+
+      // 3) Abre o modal
       document.getElementById('week-modal').style.display = 'flex';
     }
 
+
     document.getElementById('save-week').addEventListener('click', () => {
+      const val = document.getElementById('week-weight').value;
+      if (val === '') {
+        document.getElementById('week-modal').style.display = 'none';
+        return;
+      }
       const w = Number(document.getElementById('week-weight').value);
       const logs = getWeeklyLogs();
       logs[currentWeek] = {
