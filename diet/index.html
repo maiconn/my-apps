@@ -5,6 +5,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Dieta do Maicon – App (v3 arquivo único)</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     :root {
       --bg: #0f1115;
@@ -346,6 +347,7 @@
     <div class="tabs">
       <button id="tab-plan" class="btn secondary">Plano</button>
       <button id="tab-dashboard" class="btn secondary">Dashboard</button>
+      <button id="tab-evolution" class="btn secondary">Evolução</button>
     </div>
   </header>
 
@@ -412,8 +414,16 @@
     </section>
   </main>
 
+
+  <!-- Evolução -->
+  <section id="view-evolution" class="card hidden">
+    <h2>Evolução semanal</h2>
+    <canvas id="evolution-chart"></canvas>
+  </section>
+
+
   <footer class="footer">
-    <small>© 2025 • Dieta do Maicon • Arquivo único • M365 Copilot</small>
+    <small>© 2026 • Dieta do Maicon • Arquivo único • M365 Copilot</small>
   </footer>
 
   <!-- Modal -->
@@ -469,7 +479,7 @@
     // ===== Configurações ===== 
     const START_DATE = '2026-03-17';
     const END_DATE = '2026-05-15';
-
+    const TARGET_WEIGHT = 80;
 
     // ===== Dados nutricionais (por 100 g) e templates =====
     const DB = {
@@ -841,15 +851,12 @@
 
         const dateObj = new Date(year, month, d);
         if (dateObj.getDay() === 6) {
-
-          const wk = getWeekKey(dateStr);
-
           const ok = document.createElement('div');
           ok.className = 'day green';
           ok.innerHTML = '✅';
 
           ok.addEventListener('click', () => {
-            openWeekModal(wk);
+            openWeekModal(dateStr);
           });
 
           grid.appendChild(ok);
@@ -866,22 +873,25 @@
       localStorage.setItem('dietDailyLogs', JSON.stringify(data));
     }
 
-    function getWeekKey(dateStr) {
-      const d = new Date(dateStr + 'T00:00:00');
-      const firstJan = new Date(d.getFullYear(), 0, 1);
-      const days = Math.floor((d - firstJan) / (24 * 60 * 60 * 1000));
-      const week = Math.ceil((days + firstJan.getDay() + 1) / 7);
-      return `${d.getFullYear()}-W${pad(week)}`;
-    }
-
-    function getWeekCalories(weekKey) {
+    function getWeekCalories(saturdayStr) {
       const logs = getDailyLogs();
+
+      const saturday =
+        new Date(saturdayStr + 'T00:00:00');
+      const sunday =
+        new Date(saturday);
+
+      sunday.setDate(saturday.getDate() - 6);
+
       let total = 0;
+
       Object.entries(logs).forEach(([date, v]) => {
-        if (getWeekKey(date) === weekKey) {
+        const d = new Date(date + 'T00:00:00');
+        if (d >= sunday && d <= saturday) {
           total += v.kcal || 0;
         }
       });
+
       return total;
     }
 
@@ -963,43 +973,51 @@
     let currentWeek = null;
 
 
-    function openWeekModal(wk) {
-      currentWeek = wk;
+    function openWeekModal(dateStr) {
 
-      // 1) Continua exibindo as kcal da semana (como já faz hoje)
-      const kcal = getWeekCalories(wk);
+      currentWeek = dateStr;
+
+      const kcal = getWeekCalories(dateStr);
+
       document.getElementById('week-kcal').textContent =
         `Total semanal: ${kcal} kcal`;
 
-      // 2) NOVO: buscar o log semanal e preencher/limpar o peso
-      const logs = getWeeklyLogs();               // lê do localStorage
-      const existing = logs[wk];                  // entrada da semana atual (se houver)
+      const logs = getWeeklyLogs();
+      const existing = logs[dateStr];
+
       const weightInput = document.getElementById('week-weight');
 
-      // Se houver registro com 'weight', preenche; senão, limpa
       weightInput.value = (existing && existing.weight != null)
         ? existing.weight
         : '';
 
-      // 3) Abre o modal
       document.getElementById('week-modal').style.display = 'flex';
     }
 
 
     document.getElementById('save-week').addEventListener('click', () => {
       const val = document.getElementById('week-weight').value;
+
       if (val === '') {
         document.getElementById('week-modal').style.display = 'none';
         return;
       }
-      const w = Number(document.getElementById('week-weight').value);
+
+      const w = Number(val);
       const logs = getWeeklyLogs();
+
       logs[currentWeek] = {
         kcal: getWeekCalories(currentWeek),
         weight: w
       };
+
       setWeeklyLogs(logs);
       document.getElementById('week-modal').style.display = 'none';
+
+      if (!document.getElementById('view-evolution').classList.contains('hidden')) {
+        renderEvolutionChart();
+      }
+
     });
 
 
@@ -1012,15 +1030,187 @@
     })();
 
     // ===== Tabs =====
-    const showPlan = () => { document.getElementById('view-plan').classList.remove('hidden'); document.getElementById('view-dashboard').classList.add('hidden'); };
-    const showDash = () => { document.getElementById('view-dashboard').classList.remove('hidden'); document.getElementById('view-plan').classList.add('hidden'); updateProgress(); buildCalendar(currentYear, currentMonth); };
+    const showPlan = () => {
+      document.getElementById('view-plan').classList.remove('hidden');
+      document.getElementById('view-dashboard').classList.add('hidden');
+      document.getElementById('view-evolution').classList.add('hidden');
+    };
+
+    const showDash = () => {
+      document.getElementById('view-dashboard').classList.remove('hidden');
+      document.getElementById('view-plan').classList.add('hidden');
+      document.getElementById('view-evolution').classList.add('hidden');
+      updateProgress();
+      buildCalendar(currentYear, currentMonth);
+    };
+
+    const showEvolution = () => {
+      document.getElementById('view-evolution').classList.remove('hidden');
+      document.getElementById('view-plan').classList.add('hidden');
+      document.getElementById('view-dashboard').classList.add('hidden');
+      renderEvolutionChart();
+    };
+
     document.getElementById('tab-plan').addEventListener('click', showPlan);
     document.getElementById('tab-dashboard').addEventListener('click', showDash);
+    document.getElementById('tab-evolution').addEventListener('click', showEvolution);
 
     // ===== Inicialização =====
     document.querySelectorAll('.day-type .btn').forEach(b => { b.addEventListener('click', () => renderDay(b.dataset.day)); });
     document.getElementById('today').textContent = new Date().toLocaleDateString('pt-BR');
     showPlan();
+
+    let evolutionChart = null;
+
+    function renderEvolutionChart() {
+      const weekly = getWeeklyLogs();
+
+      const weeks = Object.keys(weekly).sort();
+
+      const kcal = weeks.map(w => weekly[w].kcal || 0);
+      const weight = weeks.map(w => weekly[w].weight || null);
+
+      const projected = projectWeightTarget(weekly);
+
+      let trend = [];
+      let trendColor = '#2ecc71'; 
+      
+      if (projected) {
+
+        const dates = weeks.map(w => new Date(w).getTime());
+
+        const min = Math.min(...dates);
+        const max = new Date(END_DATE).getTime();
+
+        const slope =
+          (projected - weight[0]) /
+          (max - dates[0]);
+
+        trend = dates.map(d =>
+          weight[0] + slope * (d - dates[0])
+        );
+
+        trend.push(projected);
+        weeks.push(END_DATE);
+
+        if (projected > TARGET_WEIGHT) {
+          trendColor = '#e74c3c';
+        }
+      }
+
+      const ctx = document.getElementById('evolution-chart').getContext('2d');
+
+      if (evolutionChart) {
+        evolutionChart.destroy();
+      }
+
+      evolutionChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: weeks,
+          datasets: [
+            {
+              label: 'Kcal semanal',
+              data: kcal,
+              borderColor: '#4f7cff',
+              backgroundColor: 'rgba(79,124,255,0.2)',
+              yAxisID: 'y',
+              tension: 0.3
+            },
+            {
+              label: 'Peso (kg)',
+              data: weight,
+              borderColor: '#2ecc71',
+              backgroundColor: 'rgba(46,204,113,0.2)',
+              yAxisID: 'y1',
+              tension: 0.3
+            },
+            {
+              label: 'Projeção Peso (15/05)',
+              data: trend,
+              borderColor: trendColor,
+              backgroundColor: trendColor,
+              borderDash: [6, 6],
+              yAxisID: 'y1',
+              tension: 0.3
+            }
+
+          ]
+        },
+        options: {
+          responsive: true,
+          interaction: {
+            mode: 'index',
+            intersect: false
+          },
+          stacked: false,
+          scales: {
+            y: {
+              type: 'linear',
+              position: 'left',
+              title: {
+                display: true,
+                text: 'Kcal'
+              }
+            },
+            y1: {
+              type: 'linear',
+              position: 'right',
+              grid: {
+                drawOnChartArea: false
+              },
+              title: {
+                display: true,
+                text: 'Peso (kg)'
+              }
+            }
+          }
+        }
+      });
+
+    }
+
+    function projectWeightTarget(weeklyLogs) {
+      const entries = Object.entries(weeklyLogs)
+        .filter(([d, v]) => v.weight != null)
+        .sort((a, b) => new Date(a[0]) - new Date(b[0]));
+
+      if (entries.length < 2) return null;
+
+      const x = [];
+      const y = [];
+
+      entries.forEach(([date, val]) => {
+        x.push(new Date(date).getTime());
+        y.push(val.weight);
+      });
+
+      const n = x.length;
+
+      let sumX = 0, sumY = 0, sumXY = 0, sumXX = 0;
+
+      for (let i = 0; i < n; i++) {
+        sumX += x[i];
+        sumY += y[i];
+        sumXY += x[i] * y[i];
+        sumXX += x[i] * x[i];
+      }
+
+      const slope =
+        (n * sumXY - sumX * sumY) /
+        (n * sumXX - sumX * sumX);
+
+      const intercept =
+        (sumY - slope * sumX) / n;
+
+      const targetDate =
+        new Date(END_DATE).getTime();
+
+      const projected =
+        slope * targetDate + intercept;
+
+      return projected;
+    }
   </script>
 </body>
 
