@@ -43,6 +43,9 @@ async function main() {
   sessionStorage.removeItem(STORAGE_DATA_TREINO);
 
   const feedbackCal = /** @type {HTMLElement} */ (document.getElementById('feedback-cal'));
+  const authStatus = /** @type {HTMLElement} */ (document.getElementById('auth-status'));
+
+
 
   let client;
   try {
@@ -54,6 +57,10 @@ async function main() {
 
   const session = await requireAuth(client);
   if (!session) return;
+
+  if (authStatus) {
+    authStatus.textContent = session.user.email ?? 'Sessão ativa';
+  }
 
   document.getElementById('btn-logout')?.addEventListener('click', () => signOut(client));
 

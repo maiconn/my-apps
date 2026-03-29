@@ -9,12 +9,15 @@
   <body>
     <main>
       <nav class="app-nav">
-        <a href="registrar-treino.html">Registro de treino</a>
-        <span class="app-nav-sep">·</span>
         <a href="index.html">Calendário</a>
+        <span class="app-nav-sep">·</span>
+        <a href="registrar-treino.html">Registro de treino</a>
         <span class="app-nav-sep">·</span>
         <button type="button" class="btn btn-ghost btn-nav" id="btn-logout">Sair</button>
       </nav>
+      <div class="auth-bar">
+        <span id="auth-status" class="auth-email"></span>
+      </div>
       <h1>Calendário de treinos</h1>
       <p class="sub">
         Verde = treino registrado (clique para editar). Vermelho = sem registro (clique para cadastrar).
