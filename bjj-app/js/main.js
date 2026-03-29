@@ -1,4 +1,5 @@
 import { getSupabaseClient } from './data/supabaseClient.js';
+import { requireAuth, signOut } from './auth.js';
 import { RegistroTreinoRepository } from './data/registroTreinoRepository.js';
 import { SparringRepository } from './data/sparringRepository.js';
 import { validarRegistroTreino } from './domain/registroTreino.js';
@@ -24,17 +25,6 @@ function clearFeedback() {
   if (!feedback) return;
   feedback.className = 'feedback';
   feedback.textContent = '';
-}
-
-/**
- * @param {import('@supabase/supabase-js').Session | null} session
- */
-function textoStatusAuth(session) {
-  const u = session?.user;
-  if (!u) return 'Sem sessão — ative o login anônimo no painel (Auth → Providers).';
-  if (u.email) return `Sessão: ${u.email}`;
-  if (u.is_anonymous === true) return 'Sessão anônima — pode salvar.';
-  return 'Sessão ativa — pode salvar.';
 }
 
 /**
@@ -139,27 +129,14 @@ async function main() {
     return;
   }
 
-  let {
-    data: { session },
-  } = await client.auth.getSession();
-
-  if (!session) {
-    const { data, error } = await client.auth.signInAnonymously();
-    if (error) {
-      showFeedback(
-        false,
-        `Sessão anônima falhou: ${error.message}. Habilite “Anonymous” em Authentication → Providers e tente de novo.`,
-      );
-      if (authStatus) authStatus.textContent = textoStatusAuth(null);
-      if (btnSalvar) btnSalvar.disabled = true;
-      return;
-    }
-    session = data.session;
-  }
+  const session = await requireAuth(client);
+  if (!session) return;
 
   if (authStatus) {
-    authStatus.textContent = textoStatusAuth(session);
+    authStatus.textContent = session.user.email ?? 'Sessão ativa';
   }
+
+  document.getElementById('btn-logout')?.addEventListener('click', () => signOut(client));
 
   const userId = session.user.id;
   const regRepo = new RegistroTreinoRepository(client);
@@ -233,10 +210,6 @@ async function main() {
 
   const regForm = await mountRegistroTreinoForm(client, regRoot, loaded ? { initial: loaded.form } : {});
   const spSection = await mountSparringSection(client, spRoot, loaded ? { initialSparrings: loaded.sparrings } : {});
-
-  client.auth.onAuthStateChange((_e, newSession) => {
-    if (authStatus) authStatus.textContent = textoStatusAuth(newSession);
-  });
 
   btnExcluir?.addEventListener('click', async () => {
     if (!registroIdEdicao) return;

@@ -362,3 +362,68 @@ textarea {
 .cal-day--miss:hover {
   filter: brightness(1.12);
 }
+
+/* ── Login page ── */
+
+.login-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 1.5rem 1rem;
+}
+
+.login-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 2.5rem 2rem;
+  width: 100%;
+  max-width: 360px;
+  text-align: center;
+}
+
+.login-title {
+  font-size: 1.8rem;
+  margin: 0 0 0.5rem;
+}
+
+.login-card .sub {
+  margin-bottom: 2rem;
+}
+
+.btn-google {
+  width: 100%;
+  padding: 0.65rem 1rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  gap: 0.6rem;
+}
+
+.login-error {
+  margin-top: 1rem;
+  font-size: 0.85rem;
+  color: #f87171;
+  min-height: 1.2rem;
+}
+
+/* ── Nav logout button ── */
+
+.btn-nav {
+  padding: 0.15rem 0.4rem;
+  font-size: 0.9rem;
+  border: none;
+  color: var(--accent);
+  background: transparent;
+  cursor: pointer;
+  vertical-align: baseline;
+}
+
+.btn-nav:hover {
+  text-decoration: underline;
+}
+
+.auth-email {
+  color: var(--muted);
+  font-size: 0.85rem;
+}

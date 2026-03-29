@@ -12,15 +12,15 @@
         <a href="index.html">Calendário</a>
         <span class="app-nav-sep">·</span>
         <a href="registrar-treino.html">Novo treino (hoje)</a>
+        <span class="app-nav-sep">·</span>
+        <button type="button" class="btn btn-ghost btn-nav" id="btn-logout">Sair</button>
       </nav>
       <h1>Registro de treino</h1>
       <p id="treino-data-label" class="sub mt-0"></p>
-      <p class="sub">Preencha os dados e salve no Supabase (configure <code>js/config.js</code>).</p>
-
       <div id="feedback" class="feedback" role="status"></div>
 
       <div class="auth-bar">
-        <span id="auth-status"></span>
+        <span id="auth-status" class="auth-email"></span>
       </div>
 
       <section aria-labelledby="titulo-registro">

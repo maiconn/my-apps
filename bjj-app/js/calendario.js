@@ -1,4 +1,5 @@
 import { getSupabaseClient } from './data/supabaseClient.js';
+import { requireAuth, signOut } from './auth.js';
 import { RegistroTreinoRepository } from './data/registroTreinoRepository.js';
 
 const monthNames = [
@@ -51,21 +52,10 @@ async function main() {
     return;
   }
 
-  let {
-    data: { session },
-  } = await client.auth.getSession();
+  const session = await requireAuth(client);
+  if (!session) return;
 
-  if (!session) {
-    const { data, error } = await client.auth.signInAnonymously();
-    if (error) {
-      showErr(
-        feedbackCal,
-        `Sessão anônima falhou: ${error.message}. Habilite “Anonymous” em Authentication → Providers.`,
-      );
-      return;
-    }
-    session = data.session;
-  }
+  document.getElementById('btn-logout')?.addEventListener('click', () => signOut(client));
 
   const userId = session.user.id;
   const regRepo = new RegistroTreinoRepository(client);

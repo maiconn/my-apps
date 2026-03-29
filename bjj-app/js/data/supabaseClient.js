@@ -8,8 +8,8 @@ export function getSupabaseClient() {
   }
   return createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
     auth: {
-      // Evita replaceState na URL que pode apagar ?data= ao iniciar a sessão
-      detectSessionInUrl: false,
+      // Necessário para capturar o token de retorno do OAuth (Google)
+      detectSessionInUrl: true,
     },
   });
 }
