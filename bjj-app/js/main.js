@@ -1,0 +1,311 @@
+import { getSupabaseClient } from './data/supabaseClient.js';
+import { RegistroTreinoRepository } from './data/registroTreinoRepository.js';
+import { SparringRepository } from './data/sparringRepository.js';
+import { validarRegistroTreino } from './domain/registroTreino.js';
+import { validarSparring } from './domain/sparring.js';
+import { mountRegistroTreinoForm } from './ui/registroTreinoForm.js';
+import { mountSparringSection } from './ui/sparringSection.js';
+
+const feedback = /** @type {HTMLElement} */ (document.getElementById('feedback'));
+const authStatus = /** @type {HTMLElement} */ (document.getElementById('auth-status'));
+const btnSalvar = /** @type {HTMLButtonElement} */ (document.getElementById('btn-salvar'));
+const btnExcluir = /** @type {HTMLButtonElement} */ (document.getElementById('btn-excluir'));
+const regRoot = /** @type {HTMLElement} */ (document.getElementById('registro-root'));
+const spRoot = /** @type {HTMLElement} */ (document.getElementById('sparring-root'));
+const treinoDataLabel = /** @type {HTMLElement} */ (document.getElementById('treino-data-label'));
+
+function showFeedback(ok, text) {
+  if (!feedback) return;
+  feedback.textContent = text;
+  feedback.className = `feedback visible ${ok ? 'ok' : 'err'}`;
+}
+
+function clearFeedback() {
+  if (!feedback) return;
+  feedback.className = 'feedback';
+  feedback.textContent = '';
+}
+
+/**
+ * @param {import('@supabase/supabase-js').Session | null} session
+ */
+function textoStatusAuth(session) {
+  const u = session?.user;
+  if (!u) return 'Sem sessão — ative o login anônimo no painel (Auth → Providers).';
+  if (u.email) return `Sessão: ${u.email}`;
+  if (u.is_anonymous === true) return 'Sessão anônima — pode salvar.';
+  return 'Sessão ativa — pode salvar.';
+}
+
+/**
+ * @param {Date} [d]
+ */
+function isoLocalDate(d = new Date()) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+/**
+ * @param {string} iso YYYY-MM-DD
+ */
+function formatarDataPt(iso) {
+  const p = iso.split('-').map(Number);
+  if (p.length !== 3 || p.some((n) => Number.isNaN(n))) return iso;
+  const [y, mo, da] = p;
+  return new Date(y, mo - 1, da).toLocaleDateString('pt-BR', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  });
+}
+
+/**
+ * @param {string | null} s
+ * @returns {string | null} YYYY-MM-DD ou null se inválido
+ */
+const STORAGE_DATA_TREINO = 'bjj-treino-data-iso';
+
+/**
+ * Lê ?data= da URL (searchParams, hash ou href) e, se não houver, usa sessionStorage
+ * (definido ao clicar no calendário — fallback se algo alterar a URL antes do main).
+ * @returns {string | null}
+ */
+function lerDataUrlOuStorage() {
+  const href = window.location.href;
+  let raw = new URL(href).searchParams.get('data');
+  if (!raw) {
+    const m = /[?&#]data=([^&]+)/.exec(href);
+    if (m) {
+      try {
+        raw = decodeURIComponent(m[1].replace(/\+/g, ' '));
+      } catch {
+        raw = m[1];
+      }
+    }
+  }
+  if (raw != null && String(raw).trim() !== '') {
+    sessionStorage.removeItem(STORAGE_DATA_TREINO);
+    return String(raw).trim();
+  }
+  const pending = sessionStorage.getItem(STORAGE_DATA_TREINO);
+  if (pending) {
+    sessionStorage.removeItem(STORAGE_DATA_TREINO);
+    return pending.trim();
+  }
+  return null;
+}
+
+function parseDataQuery(s) {
+  if (s == null || String(s).trim() === '') return null;
+  let t = String(s).trim();
+  try {
+    t = decodeURIComponent(t);
+  } catch {
+    /* ignore */
+  }
+  t = t.slice(0, 10);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(t)) return null;
+  const [y, m, d] = t.split('-').map(Number);
+  const dt = new Date(y, m - 1, d);
+  if (dt.getFullYear() !== y || dt.getMonth() !== m - 1 || dt.getDate() !== d) return null;
+  return t;
+}
+
+/**
+ * @param {unknown} v
+ */
+function normalizarDataIsoDb(v) {
+  if (v == null) return '';
+  const s = String(v);
+  if (/^\d{4}-\d{2}-\d{2}/.test(s)) return s.slice(0, 10);
+  return s;
+}
+
+async function main() {
+  /** Captura imediata antes de auth/Supabase (evita perder query se a URL for alterada). */
+  const paramsEarly = new URLSearchParams(window.location.search);
+  const editId = paramsEarly.get('id');
+  const dataParamRaw = lerDataUrlOuStorage();
+
+  let client;
+  try {
+    client = getSupabaseClient();
+  } catch (e) {
+    showFeedback(false, String(/** @type {Error} */ (e).message));
+    if (btnSalvar) btnSalvar.disabled = true;
+    return;
+  }
+
+  let {
+    data: { session },
+  } = await client.auth.getSession();
+
+  if (!session) {
+    const { data, error } = await client.auth.signInAnonymously();
+    if (error) {
+      showFeedback(
+        false,
+        `Sessão anônima falhou: ${error.message}. Habilite “Anonymous” em Authentication → Providers e tente de novo.`,
+      );
+      if (authStatus) authStatus.textContent = textoStatusAuth(null);
+      if (btnSalvar) btnSalvar.disabled = true;
+      return;
+    }
+    session = data.session;
+  }
+
+  if (authStatus) {
+    authStatus.textContent = textoStatusAuth(session);
+  }
+
+  const userId = session.user.id;
+  const regRepo = new RegistroTreinoRepository(client);
+  const spRepo = new SparringRepository(client);
+
+  /** Data escolhida: ?data=, storage (calendário), ou hoje se abriu index sem data */
+  let dataTreinoISO;
+  if (dataParamRaw != null && dataParamRaw !== '') {
+    const parsed = parseDataQuery(dataParamRaw);
+    if (!parsed) {
+      showFeedback(false, 'Data inválida na URL. Use o formato AAAA-MM-DD (ex.: 2026-03-27).');
+      if (btnSalvar) btnSalvar.disabled = true;
+      return;
+    }
+    dataTreinoISO = parsed;
+  } else {
+    dataTreinoISO = isoLocalDate();
+  }
+
+  let loaded = null;
+  /** @type {string | null} */
+  let registroIdEdicao = null;
+
+  try {
+    if (editId) {
+      loaded = await regRepo.findByIdCompleto(userId, editId);
+      if (!loaded) {
+        showFeedback(false, 'Treino não encontrado.');
+        if (btnSalvar) btnSalvar.disabled = true;
+        return;
+      }
+      registroIdEdicao = loaded.id;
+      dataTreinoISO = normalizarDataIsoDb(loaded.dataTreino);
+    } else {
+      const existente = await regRepo.findIdByUserAndData(userId, dataTreinoISO);
+      if (existente) {
+        loaded = await regRepo.findByIdCompleto(userId, existente);
+        if (!loaded) {
+          showFeedback(false, 'Treino não encontrado.');
+          if (btnSalvar) btnSalvar.disabled = true;
+          return;
+        }
+        registroIdEdicao = loaded.id;
+        dataTreinoISO = normalizarDataIsoDb(loaded.dataTreino);
+        const url = new URL(window.location.href);
+        url.searchParams.set('id', existente);
+        url.searchParams.delete('data');
+        window.history.replaceState({}, '', url.toString());
+      }
+    }
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    showFeedback(false, `Erro ao carregar treino: ${msg}`);
+    if (btnSalvar) btnSalvar.disabled = true;
+    return;
+  }
+
+  if (treinoDataLabel) {
+    const dataFmt = formatarDataPt(dataTreinoISO);
+    treinoDataLabel.textContent = registroIdEdicao
+      ? `Editando treino de ${dataFmt}`
+      : `Novo treino em ${dataFmt} — preencha e salve.`;
+  }
+
+  if (btnExcluir) {
+    btnExcluir.hidden = !registroIdEdicao;
+  }
+  if (btnSalvar) {
+    btnSalvar.textContent = registroIdEdicao ? 'Atualizar treino' : 'Salvar treino';
+  }
+
+  const regForm = await mountRegistroTreinoForm(client, regRoot, loaded ? { initial: loaded.form } : {});
+  const spSection = await mountSparringSection(client, spRoot, loaded ? { initialSparrings: loaded.sparrings } : {});
+
+  client.auth.onAuthStateChange((_e, newSession) => {
+    if (authStatus) authStatus.textContent = textoStatusAuth(newSession);
+  });
+
+  btnExcluir?.addEventListener('click', async () => {
+    if (!registroIdEdicao) return;
+    if (!window.confirm('Excluir este treino e todos os sparrings vinculados?')) return;
+    clearFeedback();
+    try {
+      await regRepo.deleteById(userId, registroIdEdicao);
+      showFeedback(true, 'Treino excluído.');
+      window.location.href = 'index.html';
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      showFeedback(false, msg);
+    }
+  });
+
+  btnSalvar?.addEventListener('click', async () => {
+    clearFeedback();
+    const {
+      data: { session: s },
+    } = await client.auth.getSession();
+    if (!s?.user) {
+      showFeedback(false, 'É necessário estar autenticado para salvar.');
+      return;
+    }
+    const uid = s.user.id;
+
+    const rawReg = regForm.getData();
+    const vReg = validarRegistroTreino(rawReg);
+    if (!vReg.ok) {
+      showFeedback(false, vReg.erros.join(' '));
+      return;
+    }
+
+    const rawSps = spSection.getData();
+    /** @type {import('./domain/sparring.js').SparringInput[]} */
+    const sparringsOk = [];
+    for (let i = 0; i < rawSps.length; i++) {
+      const vs = validarSparring(rawSps[i]);
+      if (!vs.ok) {
+        showFeedback(false, `Sparring ${i + 1}: ${vs.erros.join(' ')}`);
+        return;
+      }
+      sparringsOk.push(vs.value);
+    }
+
+    try {
+      if (registroIdEdicao) {
+        await regRepo.updateFull(uid, registroIdEdicao, vReg.value);
+        await spRepo.replaceForRegistro(registroIdEdicao, sparringsOk, uid);
+        showFeedback(true, 'Treino atualizado com sucesso.');
+      } else {
+        const { id } = await regRepo.create(uid, vReg.value, dataTreinoISO);
+        await spRepo.createMany(id, sparringsOk, uid);
+        showFeedback(true, 'Treino salvo com sucesso.');
+        window.location.replace(`registrar-treino.html?id=${id}`);
+      }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      if (/duplicate|unique|23505/i.test(msg)) {
+        showFeedback(false, 'Já existe treino nesta data. Abra pelo calendário para editar.');
+      } else {
+        showFeedback(false, msg);
+      }
+    }
+  });
+}
+
+void main().catch((err) => {
+  const msg = err instanceof Error ? err.message : String(err);
+  showFeedback(false, msg);
+  if (btnSalvar) btnSalvar.disabled = true;
+});

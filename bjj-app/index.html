@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>BJJ — Calendário</title>
+    <link rel="stylesheet" href="css/app.css" />
+  </head>
+  <body>
+    <main>
+      <nav class="app-nav">
+        <a href="registrar-treino.html">Registro de treino</a>
+        <span class="app-nav-sep">·</span>
+        <a href="index.html">Calendário</a>
+      </nav>
+      <h1>Calendário de treinos</h1>
+      <p class="sub">
+        Verde = treino registrado (clique para editar). Vermelho = sem registro (clique para cadastrar).
+      </p>
+      <div id="feedback-cal" class="feedback" role="status"></div>
+      <div class="cal-toolbar">
+        <button type="button" class="btn" id="cal-prev" aria-label="Mês anterior">←</button>
+        <h2 id="cal-title" class="cal-title"></h2>
+        <button type="button" class="btn" id="cal-next" aria-label="Próximo mês">→</button>
+      </div>
+      <div id="cal-weekdays" class="cal-weekdays"></div>
+      <div id="cal-grid" class="cal-grid"></div>
+    </main>
+    <script type="module" src="js/calendario.js"></script>
+  </body>
+</html>

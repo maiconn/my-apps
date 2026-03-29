@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>BJJ — Registro de treino</title>
+    <link rel="stylesheet" href="css/app.css" />
+  </head>
+  <body>
+    <main>
+      <nav class="app-nav">
+        <a href="index.html">Calendário</a>
+        <span class="app-nav-sep">·</span>
+        <a href="registrar-treino.html">Novo treino (hoje)</a>
+      </nav>
+      <h1>Registro de treino</h1>
+      <p id="treino-data-label" class="sub mt-0"></p>
+      <p class="sub">Preencha os dados e salve no Supabase (configure <code>js/config.js</code>).</p>
+
+      <div id="feedback" class="feedback" role="status"></div>
+
+      <div class="auth-bar">
+        <span id="auth-status"></span>
+      </div>
+
+      <section aria-labelledby="titulo-registro">
+        <h2 id="titulo-registro">Treino</h2>
+        <div id="registro-root"></div>
+      </section>
+
+      <section aria-labelledby="titulo-sparring">
+        <h2 id="titulo-sparring">Sparrings</h2>
+        <p class="sub mt-0">Opcional: adicione um ou mais sparrings.</p>
+        <div id="sparring-root"></div>
+      </section>
+
+      <div class="actions">
+        <button type="button" class="btn btn-primary" id="btn-salvar">Salvar treino</button>
+        <button type="button" class="btn btn-danger" id="btn-excluir" hidden>Excluir treino</button>
+      </div>
+    </main>
+    <script type="module" src="js/main.js"></script>
+  </body>
+</html>
