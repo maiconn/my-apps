@@ -17,7 +17,14 @@ export async function mountRegistroTreinoForm(client, container, options = {}) {
   const datalistTiposId = 'dl-tipos-treino';
   const base = document.createElement('div');
   base.innerHTML = `
-    <div>
+    <div class="row">
+      <label for="rt-modalidade">Modalidade</label>
+      <select id="rt-modalidade">
+        <option value="1">Gui</option>
+        <option value="2">No Gui</option>
+      </select>
+    </div>
+    <div class="row">
       <h2 class="form-block-title">Tipos de treino e variações</h2>
       <p class="form-hint">Ao menos um par tipo + variação. Você pode escolher existentes ou digitar um novo nome.</p>
       <datalist id="${datalistTiposId}"></datalist>
@@ -166,6 +173,8 @@ export async function mountRegistroTreinoForm(client, container, options = {}) {
   }
 
   if (initial) {
+    const mod = /** @type {HTMLSelectElement} */ (base.querySelector('#rt-modalidade'));
+    if (mod) mod.value = initial.modalidade ?? '';
     const ta = /** @type {HTMLTextAreaElement} */ (base.querySelector('#rt-tecnica'));
     if (ta) ta.value = initial.tecnicaAprendida ?? '';
     const du = /** @type {HTMLTextAreaElement} */ (base.querySelector('#rt-duvidas'));
@@ -217,18 +226,19 @@ export async function mountRegistroTreinoForm(client, container, options = {}) {
       const tecnica =
         /** @type {HTMLTextAreaElement} */ (container.querySelector('#rt-tecnica'))?.value?.trim() || undefined;
       return {
+        modalidade: container.querySelector('#rt-modalidade')?.value ?? 1,
         itensTipoVariacao,
         tecnicaAprendida: tecnica,
         nivelEntendimento: Number(
-          /** @type {HTMLInputElement} */ (container.querySelector('#rt-entendimento'))?.value ?? 5,
+          /** @type {HTMLInputElement} */(container.querySelector('#rt-entendimento'))?.value ?? 5,
         ),
         duvidas:
           /** @type {HTMLTextAreaElement} */ (container.querySelector('#rt-duvidas'))?.value?.trim() ||
           undefined,
         nivelEnergia: Number(
-          /** @type {HTMLInputElement} */ (container.querySelector('#rt-energia'))?.value ?? 5,
+          /** @type {HTMLInputElement} */(container.querySelector('#rt-energia'))?.value ?? 5,
         ),
-        nivelFoco: Number(/** @type {HTMLInputElement} */ (container.querySelector('#rt-foco'))?.value ?? 5),
+        nivelFoco: Number(/** @type {HTMLInputElement} */(container.querySelector('#rt-foco'))?.value ?? 5),
       };
     },
   };

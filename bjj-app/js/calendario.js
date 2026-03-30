@@ -17,7 +17,7 @@ const monthNames = [
   'Dezembro',
 ];
 
-const weekLabels = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
+const weekLabels = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
 
 /** Mesma chave que em main.js — fallback se a URL perder ?data= */
 const STORAGE_DATA_TREINO = 'bjj-treino-data-iso';
@@ -109,7 +109,7 @@ async function main() {
 
     const first = new Date(year, month - 1, 1);
     const lastDay = new Date(year, month, 0).getDate();
-    const startWeekday = (first.getDay() + 6) % 7;
+    const startWeekday = first.getDay();
 
     for (let i = 0; i < startWeekday; i++) {
       const cell = document.createElement('div');

@@ -109,6 +109,7 @@ export class RegistroTreinoRepository {
         duvidas: registro.duvidas ?? null,
         nivel_energia: registro.nivelEnergia,
         nivel_foco: registro.nivelFoco,
+        modalidade: registro.modalidade
       })
       .select('id')
       .single();
@@ -133,6 +134,7 @@ export class RegistroTreinoRepository {
         duvidas: registro.duvidas ?? null,
         nivel_energia: registro.nivelEnergia,
         nivel_foco: registro.nivelFoco,
+        modalidade: registro.modalidade
       })
       .eq('id', registroId)
       .eq('user_id', userId);
@@ -383,7 +385,7 @@ function mapearSparringsDeLinhas(spRows) {
 export async function carregarRegistroCompleto(client, userId, registroId) {
   const { data: r, error } = await client
     .from('registro_treino')
-    .select('id, data_treino, tecnica_aprendida, nivel_entendimento, duvidas, nivel_energia, nivel_foco')
+    .select('id, data_treino, tecnica_aprendida, nivel_entendimento, duvidas, nivel_energia, nivel_foco, modalidade')
     .eq('id', registroId)
     .eq('user_id', userId)
     .maybeSingle();
@@ -401,6 +403,7 @@ export async function carregarRegistroCompleto(client, userId, registroId) {
     duvidas: r.duvidas ? String(r.duvidas) : undefined,
     nivelEnergia: Number(r.nivel_energia),
     nivelFoco: Number(r.nivel_foco),
+    modalidade: r.modalidade
   };
 
   return {

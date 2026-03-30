@@ -85,6 +85,7 @@ export function validarRegistroTreino(data) {
   const ne = Number(data.nivelEntendimento);
   const ee = Number(data.nivelEnergia);
   const nf = Number(data.nivelFoco);
+  const modalidade = Number(data.modalidade);
   if (!Number.isInteger(ne) || ne < SLIDER_MIN || ne > SLIDER_MAX) {
     erros.push('Nível de entendimento deve ser entre 1 e 5.');
   }
@@ -94,11 +95,15 @@ export function validarRegistroTreino(data) {
   if (!Number.isInteger(nf) || nf < SLIDER_MIN || nf > SLIDER_MAX) {
     erros.push('Nível de foco deve ser entre 1 e 5.');
   }
+  if (!Number.isInteger(modalidade) || modalidade < 1 || modalidade > 2) {
+    erros.push('Modalidade deve ser entre 1 e 2.');
+  }
 
   if (erros.length > 0) return { ok: false, erros };
 
   /** @type {RegistroTreinoInput} */
   const value = {
+    modalidade: modalidade,
     itensTipoVariacao: itens.map((item) => ({
       tipoTreinoId: trimStr(item.tipoTreinoId),
       tipoTreinoNome: trimStr(item.tipoTreinoNome),
@@ -120,6 +125,7 @@ export function validarRegistroTreino(data) {
  */
 export function registroTreinoPadrao() {
   return {
+    modalidade: 1,
     itensTipoVariacao: [
       {
         tipoTreinoId: null,
