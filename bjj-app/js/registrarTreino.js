@@ -6,6 +6,7 @@ import { validarRegistroTreino } from './domain/registroTreino.js';
 import { validarSparring } from './domain/sparring.js';
 import { mountRegistroTreinoForm } from './ui/registroTreinoForm.js';
 import { mountSparringSection } from './ui/sparringSection.js';
+import { showLoader, hideLoader, withLoader } from './ui/loader.js';
 
 const feedback = /** @type {HTMLElement} */ (document.getElementById('feedback'));
 const authStatus = /** @type {HTMLElement} */ (document.getElementById('auth-status'));
@@ -162,7 +163,7 @@ async function main() {
 
   try {
     if (editId) {
-      loaded = await regRepo.findByIdCompleto(userId, editId);
+      loaded = await withLoader(() => regRepo.findByIdCompleto(userId, editId));
       if (!loaded) {
         showFeedback(false, 'Treino não encontrado.');
         if (btnSalvar) btnSalvar.disabled = true;
@@ -171,9 +172,9 @@ async function main() {
       registroIdEdicao = loaded.id;
       dataTreinoISO = normalizarDataIsoDb(loaded.dataTreino);
     } else {
-      const existente = await regRepo.findIdByUserAndData(userId, dataTreinoISO);
+      const existente = await withLoader(() => regRepo.findIdByUserAndData(userId, dataTreinoISO));
       if (existente) {
-        loaded = await regRepo.findByIdCompleto(userId, existente);
+        loaded = await withLoader(() => regRepo.findByIdCompleto(userId, existente));
         if (!loaded) {
           showFeedback(false, 'Treino não encontrado.');
           if (btnSalvar) btnSalvar.disabled = true;
@@ -209,14 +210,18 @@ async function main() {
   }
 
   const regForm = await mountRegistroTreinoForm(client, regRoot, loaded ? { initial: loaded.form } : {});
-  const spSection = await mountSparringSection(client, spRoot, loaded ? { initialSparrings: loaded.sparrings } : {});
+  const spSection = await mountSparringSection(
+    client,
+    spRoot,
+    loaded ? { userId, initialSparrings: loaded.sparrings } : { userId },
+  );
 
   btnExcluir?.addEventListener('click', async () => {
     if (!registroIdEdicao) return;
     if (!window.confirm('Excluir este treino e todos os sparrings vinculados?')) return;
     clearFeedback();
     try {
-      await regRepo.deleteById(userId, registroIdEdicao);
+      await withLoader(() => regRepo.deleteById(userId, registroIdEdicao));
       showFeedback(true, 'Treino excluído.');
       window.location.href = 'index.html';
     } catch (err) {
@@ -257,12 +262,17 @@ async function main() {
 
     try {
       if (registroIdEdicao) {
-        await regRepo.updateFull(uid, registroIdEdicao, vReg.value);
-        await spRepo.replaceForRegistro(registroIdEdicao, sparringsOk, uid);
+        await withLoader(async () => {
+          await regRepo.updateFull(uid, registroIdEdicao, vReg.value);
+          await spRepo.replaceForRegistro(registroIdEdicao, sparringsOk, uid);
+        });
         showFeedback(true, 'Treino atualizado com sucesso.');
       } else {
-        const { id } = await regRepo.create(uid, vReg.value, dataTreinoISO);
-        await spRepo.createMany(id, sparringsOk, uid);
+        const { id } = await withLoader(async () => {
+          const result = await regRepo.create(uid, vReg.value, dataTreinoISO);
+          await spRepo.createMany(result.id, sparringsOk, uid);
+          return result;
+        });
         showFeedback(true, 'Treino salvo com sucesso.');
         window.location.replace(`registrar-treino.html?id=${id}`);
       }

@@ -283,8 +283,17 @@ async function carregarSparrings(client, registroId) {
       duracao_mm_ss,
       nivel_sparring,
       inicio,
+      parceiro_treino_id,
       observacoes,
       ordem,
+      parceiro_treino (
+        id,
+        nome,
+        sexo,
+        aniversario,
+        faixa,
+        peso_kg
+      ),
       sparring_acao (
         falha,
         parcial,
@@ -304,7 +313,7 @@ async function carregarSparrings(client, registroId) {
 
   const { data: spPlain, error: eSpPlain } = await client
     .from('sparring')
-    .select('id, duracao_mm_ss, nivel_sparring, inicio, observacoes, ordem')
+    .select('id, duracao_mm_ss, nivel_sparring, inicio, parceiro_treino_id, observacoes, ordem')
     .eq('registro_treino_id', registroId)
     .order('ordem', { ascending: true });
   if (eSpPlain) throw eSpPlain;
@@ -314,6 +323,26 @@ async function carregarSparrings(client, registroId) {
   const out = [];
 
   for (const row of spList) {
+    let parceiroTreino = undefined;
+    if (row.parceiro_treino_id) {
+      const { data: parceiro, error: eParceiro } = await client
+        .from('parceiro_treino')
+        .select('id, nome, sexo, aniversario, faixa, peso_kg')
+        .eq('id', row.parceiro_treino_id)
+        .maybeSingle();
+      if (eParceiro) throw eParceiro;
+      if (parceiro) {
+        parceiroTreino = {
+          id: String(parceiro.id),
+          nome: String(parceiro.nome),
+          sexo: parceiro.sexo === 'F' ? 'F' : 'M',
+          aniversario: String(parceiro.aniversario),
+          faixa: normalizarFaixa(parceiro.faixa),
+          pesoKg: Number(parceiro.peso_kg),
+        };
+      }
+    }
+
     const { data: acoesRows, error: eAc } = await client
       .from('sparring_acao')
       .select('falha, parcial, sucesso, ordem, acao_tecnica_id')
@@ -338,6 +367,7 @@ async function carregarSparrings(client, registroId) {
       duracaoMmSs: String(row.duracao_mm_ss ?? ''),
       nivelSparring: Number(row.nivel_sparring),
       inicio: row.inicio === 'Passagem' ? 'Passagem' : 'Guarda',
+      parceiroTreino,
       observacoes: row.observacoes ? String(row.observacoes) : undefined,
       acoes: sorted.map((a) => ({
         acaoTecnicaId: a.acao_tecnica_id ? String(a.acao_tecnica_id) : null,
@@ -366,6 +396,7 @@ function mapearSparringsDeLinhas(spRows) {
       duracaoMmSs: String(row.duracao_mm_ss ?? ''),
       nivelSparring: Number(row.nivel_sparring),
       inicio: row.inicio === 'Passagem' ? 'Passagem' : 'Guarda',
+      parceiroTreino: mapearParceiro(/** @type {Record<string, unknown>} */ (row)),
       observacoes: row.observacoes ? String(row.observacoes) : undefined,
       acoes: sorted.map((a) => {
         const ar = /** @type {Record<string, unknown>} */ (a);
@@ -380,6 +411,33 @@ function mapearSparringsDeLinhas(spRows) {
       }),
     };
   });
+}
+
+/**
+ * @param {Record<string, unknown>} row
+ */
+function mapearParceiro(row) {
+  const raw = /** @type {unknown} */ (row.parceiro_treino);
+  if (!raw || Array.isArray(raw)) return undefined;
+  const p = /** @type {Record<string, unknown>} */ (raw);
+  if (!p.id) return undefined;
+  return {
+    id: String(p.id),
+    nome: String(p.nome ?? ''),
+    sexo: p.sexo === 'F' ? 'F' : 'M',
+    aniversario: String(p.aniversario ?? ''),
+    faixa: normalizarFaixa(p.faixa),
+    pesoKg: Number(p.peso_kg ?? 0),
+  };
+}
+
+/**
+ * @param {unknown} faixa
+ */
+function normalizarFaixa(faixa) {
+  const s = String(faixa ?? '').toLowerCase();
+  if (s === 'azul' || s === 'marrom' || s === 'preta') return s;
+  return 'branca';
 }
 
 export async function carregarRegistroCompleto(client, userId, registroId) {

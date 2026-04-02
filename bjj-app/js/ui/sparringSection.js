@@ -1,13 +1,16 @@
 import { listarAcoesTecnicas } from '../data/acaoTecnicaRepository.js';
+import { buscarParceirosTreinoPorPrefixo } from '../data/parceiroTreinoRepository.js';
 import { SPARRING_DURACAO_PADRAO, SPARRING_INICIO, sparringPadrao } from '../domain/sparring.js';
+import { showLoader, hideLoader } from './loader.js';
 
 /**
  * @param {import('@supabase/supabase-js').SupabaseClient} client
  * @param {HTMLElement} container
- * @param {{ initialSparrings?: import('../domain/sparring.js').SparringInput[] }} [options]
+ * @param {{ userId: string, initialSparrings?: import('../domain/sparring.js').SparringInput[] }} options
  */
-export async function mountSparringSection(client, container, options = {}) {
+export async function mountSparringSection(client, container, options) {
   const acoesCatalogo = await listarAcoesTecnicas(client);
+  const userId = options.userId;
   const dlAcoesId = 'dl-acoes-tecnicas';
   const base = document.createElement('div');
   base.innerHTML = `
@@ -54,10 +57,12 @@ export async function mountSparringSection(client, container, options = {}) {
    */
   function addSparringCard(initial) {
     const sp = initial ?? sparringPadrao();
+    const parceiro = sp.parceiroTreino;
     const idSuffix = `${spIndex++}`;
     const card = document.createElement('div');
     card.className = 'sparring-card';
     card.dataset.sparringCard = '';
+    if (parceiro?.id) card.dataset.parceiroId = parceiro.id;
     card.innerHTML = `
       <h3>Sparring</h3>
       <div class="row">
@@ -79,6 +84,40 @@ export async function mountSparringSection(client, container, options = {}) {
         </select>
       </div>
       <div class="row">
+        <label>Parceiro de treino</label>
+        <input type="text" name="parceiro-nome" placeholder="Digite para buscar (ex.: Ma)" value="${escapeAttr(
+          parceiro?.nome ?? '',
+        )}" autocomplete="off" />
+        <div class="autocomplete-list" data-parceiro-sugestoes hidden></div>
+      </div>
+      <div class="row parceiro-grid">
+        <div>
+          <label>Sexo</label>
+          <select name="parceiro-sexo">
+            <option value="M" ${parceiro?.sexo === 'M' || !parceiro?.sexo ? 'selected' : ''}>M</option>
+            <option value="F" ${parceiro?.sexo === 'F' ? 'selected' : ''}>F</option>
+          </select>
+        </div>
+        <div>
+          <label>Aniversário</label>
+          <input type="date" name="parceiro-aniversario" value="${escapeAttr(parceiro?.aniversario ?? '')}" />
+          <div class="text-muted parceiro-idade" data-parceiro-idade></div>
+        </div>
+        <div>
+          <label>Faixa</label>
+          <select name="parceiro-faixa">
+            <option value="branca" ${parceiro?.faixa === 'branca' || !parceiro?.faixa ? 'selected' : ''}>Branca</option>
+            <option value="azul" ${parceiro?.faixa === 'azul' ? 'selected' : ''}>Azul</option>
+            <option value="marrom" ${parceiro?.faixa === 'marrom' ? 'selected' : ''}>Marrom</option>
+            <option value="preta" ${parceiro?.faixa === 'preta' ? 'selected' : ''}>Preta</option>
+          </select>
+        </div>
+        <div>
+          <label>Peso (kg)</label>
+          <input type="number" name="parceiro-peso" min="1" step="0.1" value="${parceiro?.pesoKg ?? ''}" />
+        </div>
+      </div>
+      <div class="row">
         <label>Observações <span class="text-muted">(opcional)</span></label>
         <textarea name="obs" rows="2" placeholder="Notas do round"></textarea>
       </div>
@@ -94,6 +133,95 @@ export async function mountSparringSection(client, container, options = {}) {
 
     const obsTxt = /** @type {HTMLTextAreaElement} */ (card.querySelector('[name=obs]'));
     if (obsTxt) obsTxt.value = sp.observacoes ?? '';
+
+    const parceiroNomeInput = /** @type {HTMLInputElement} */ (card.querySelector('[name=parceiro-nome]'));
+    const parceiroSexoInput = /** @type {HTMLSelectElement} */ (card.querySelector('[name=parceiro-sexo]'));
+    const parceiroAniversarioInput = /** @type {HTMLInputElement} */ (card.querySelector('[name=parceiro-aniversario]'));
+    const parceiroFaixaInput = /** @type {HTMLSelectElement} */ (card.querySelector('[name=parceiro-faixa]'));
+    const parceiroPesoInput = /** @type {HTMLInputElement} */ (card.querySelector('[name=parceiro-peso]'));
+    const parceiroIdadeEl = /** @type {HTMLElement} */ (card.querySelector('[data-parceiro-idade]'));
+    const sugestoesEl = /** @type {HTMLElement} */ (card.querySelector('[data-parceiro-sugestoes]'));
+
+    /** @type {number | undefined} */
+    let autocompleteTimer;
+    let buscaSeq = 0;
+
+    /** @param {{ id: string, nome: string, sexo: 'M' | 'F', aniversario: string, faixa: string, pesoKg: number }} parceiroFound */
+    function selecionarParceiro(parceiroFound) {
+      card.dataset.parceiroId = parceiroFound.id;
+      parceiroNomeInput.value = parceiroFound.nome;
+      parceiroSexoInput.value = parceiroFound.sexo;
+      parceiroAniversarioInput.value = parceiroFound.aniversario;
+      parceiroFaixaInput.value = parceiroFound.faixa;
+      parceiroPesoInput.value = String(parceiroFound.pesoKg);
+      atualizarIdadeParceiro();
+      sugestoesEl.hidden = true;
+      sugestoesEl.innerHTML = '';
+    }
+
+    function atualizarIdadeParceiro() {
+      const idade = calcularIdade(parceiroAniversarioInput.value);
+      parceiroIdadeEl.textContent = Number.isFinite(idade) ? `Idade: ${idade} anos` : '';
+    }
+
+    /** @param {{ id: string, nome: string, faixa: string, pesoKg: number }[]} parceiros */
+    function renderSugestoesParceiro(parceiros) {
+      sugestoesEl.innerHTML = '';
+      if (parceiros.length === 0) {
+        sugestoesEl.hidden = true;
+        return;
+      }
+
+      parceiros.forEach((parceiroFound) => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'autocomplete-item';
+        b.textContent = `${parceiroFound.nome} - ${capitalizar(parceiroFound.faixa)} - ${formatarPesoKg(
+          parceiroFound.pesoKg,
+        )}`;
+        b.addEventListener('mousedown', (ev) => ev.preventDefault());
+        b.addEventListener('click', () => selecionarParceiro(parceiroFound));
+        sugestoesEl.appendChild(b);
+      });
+
+      sugestoesEl.hidden = false;
+    }
+
+    parceiroNomeInput.addEventListener('input', () => {
+      card.dataset.parceiroId = '';
+      const termo = parceiroNomeInput.value.trim();
+      if (autocompleteTimer) window.clearTimeout(autocompleteTimer);
+      if (termo.length < 2) {
+        sugestoesEl.hidden = true;
+        sugestoesEl.innerHTML = '';
+        return;
+      }
+
+      autocompleteTimer = window.setTimeout(async () => {
+        const seq = ++buscaSeq;
+        try {
+          showLoader();
+          const parceiros = await buscarParceirosTreinoPorPrefixo(client, userId, termo);
+          hideLoader();
+          if (seq !== buscaSeq) return;
+          renderSugestoesParceiro(parceiros);
+        } catch {
+          hideLoader();
+          if (seq !== buscaSeq) return;
+          sugestoesEl.hidden = true;
+          sugestoesEl.innerHTML = '';
+        }
+      }, 220);
+    });
+
+    parceiroNomeInput.addEventListener('blur', () => {
+      window.setTimeout(() => {
+        sugestoesEl.hidden = true;
+      }, 120);
+    });
+
+    parceiroAniversarioInput.addEventListener('change', atualizarIdadeParceiro);
+    atualizarIdadeParceiro();
 
     const acoesRoot = /** @type {HTMLElement} */ (card.querySelector('.acoes-root'));
 
@@ -192,6 +320,19 @@ export async function mountSparringSection(client, container, options = {}) {
           nivelSparring: Number(nivel?.value ?? 2),
           inicio:
             inicio?.value === SPARRING_INICIO.PASSAGEM ? SPARRING_INICIO.PASSAGEM : SPARRING_INICIO.GUARDA,
+          parceiroTreino:
+            /** @type {HTMLInputElement} */ (card.querySelector('[name=parceiro-nome]'))?.value?.trim()
+              ? {
+                  id: card.dataset.parceiroId?.trim() || null,
+                  nome: /** @type {HTMLInputElement} */ (card.querySelector('[name=parceiro-nome]')).value.trim(),
+                  sexo: /** @type {HTMLSelectElement} */ (card.querySelector('[name=parceiro-sexo]')).value === 'F' ? 'F' : 'M',
+                  aniversario: /** @type {HTMLInputElement} */ (card.querySelector('[name=parceiro-aniversario]')).value,
+                  faixa: /** @type {'branca' | 'azul' | 'marrom' | 'preta'} */ (
+                    /** @type {HTMLSelectElement} */ (card.querySelector('[name=parceiro-faixa]')).value
+                  ),
+                  pesoKg: Number(/** @type {HTMLInputElement} */ (card.querySelector('[name=parceiro-peso]')).value),
+                }
+              : undefined,
           observacoes: obs?.value?.trim() || undefined,
           acoes,
         };
@@ -205,4 +346,40 @@ export async function mountSparringSection(client, container, options = {}) {
  */
 function escapeAttr(s) {
   return s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+}
+
+/**
+ * @param {string} faixa
+ */
+function capitalizar(faixa) {
+  const s = String(faixa ?? '');
+  return s ? `${s[0].toUpperCase()}${s.slice(1).toLowerCase()}` : '';
+}
+
+/**
+ * @param {number} peso
+ */
+function formatarPesoKg(peso) {
+  const v = Number(peso);
+  if (!Number.isFinite(v)) return '';
+  if (Number.isInteger(v)) return `${v}kg`;
+  return `${v.toFixed(1)}kg`;
+}
+
+/**
+ * @param {string} iso
+ */
+function calcularIdade(iso) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(iso ?? ''))) return NaN;
+  const [y, m, d] = iso.split('-').map(Number);
+  const nasc = new Date(y, m - 1, d);
+  if (nasc.getFullYear() !== y || nasc.getMonth() !== m - 1 || nasc.getDate() !== d) return NaN;
+
+  const hoje = new Date();
+  let idade = hoje.getFullYear() - y;
+  const aindaNaoFez =
+    hoje.getMonth() < nasc.getMonth() ||
+    (hoje.getMonth() === nasc.getMonth() && hoje.getDate() < nasc.getDate());
+  if (aindaNaoFez) idade -= 1;
+  return idade < 0 ? NaN : idade;
 }

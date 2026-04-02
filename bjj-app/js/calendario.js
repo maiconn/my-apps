@@ -1,6 +1,7 @@
 import { getSupabaseClient } from './data/supabaseClient.js';
 import { requireAuth, signOut } from './auth.js';
 import { RegistroTreinoRepository } from './data/registroTreinoRepository.js';
+import { withLoader } from './ui/loader.js';
 
 const monthNames = [
   'Janeiro',
@@ -89,7 +90,7 @@ async function main() {
 
     let rows;
     try {
-      rows = await regRepo.listByMonth(userId, year, month);
+      rows = await withLoader(() => regRepo.listByMonth(userId, year, month));
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
       showErr(feedbackCal, msg);

@@ -3,12 +3,16 @@
  */
 
 /** @typedef {{ acaoTecnicaId?: string | null, acaoTecnicaNome?: string | null, falha: number, parcial: number, sucesso: number }} AcaoTecnicaContagem */
+/** @typedef {'M' | 'F'} ParceiroTreinoSexo */
+/** @typedef {'branca' | 'azul' | 'marrom' | 'preta'} ParceiroTreinoFaixa */
+/** @typedef {{ id?: string | null, nome: string, sexo: ParceiroTreinoSexo, aniversario: string, faixa: ParceiroTreinoFaixa, pesoKg: number }} ParceiroTreinoInput */
 
 /**
  * @typedef {{
  *   duracaoMmSs: string,
  *   nivelSparring: number,
  *   inicio: 'Guarda' | 'Passagem',
+ *   parceiroTreino?: ParceiroTreinoInput,
  *   observacoes?: string,
  *   acoes: AcaoTecnicaContagem[],
  * }} SparringInput
@@ -60,6 +64,39 @@ export function validarSparring(data) {
     erros.push('Início deve ser Guarda ou Passagem.');
   }
 
+  const parceiro = data.parceiroTreino;
+  if (parceiro) {
+    const nomeParceiro = String(parceiro.nome ?? '').trim();
+    if (!nomeParceiro) {
+      erros.push('Nome do parceiro é obrigatório.');
+    }
+
+    if (parceiro.sexo !== 'M' && parceiro.sexo !== 'F') {
+      erros.push('Sexo do parceiro deve ser M ou F.');
+    }
+
+    const aniversario = String(parceiro.aniversario ?? '').trim();
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(aniversario)) {
+      erros.push('Aniversário do parceiro deve estar no formato AAAA-MM-DD.');
+    } else {
+      const [yy, mm, dd] = aniversario.split('-').map(Number);
+      const dt = new Date(yy, mm - 1, dd);
+      if (dt.getFullYear() !== yy || dt.getMonth() !== mm - 1 || dt.getDate() !== dd) {
+        erros.push('Aniversário do parceiro é inválido.');
+      }
+    }
+
+    const faixa = String(parceiro.faixa ?? '').toLowerCase();
+    if (!['branca', 'azul', 'marrom', 'preta'].includes(faixa)) {
+      erros.push('Faixa do parceiro deve ser branca, azul, marrom ou preta.');
+    }
+
+    const peso = Number(parceiro.pesoKg);
+    if (!Number.isFinite(peso) || peso <= 0) {
+      erros.push('Peso do parceiro deve ser maior que zero.');
+    }
+  }
+
   const acoes = Array.isArray(data.acoes) ? data.acoes : [];
   for (let i = 0; i < acoes.length; i++) {
     const a = acoes[i];
@@ -84,6 +121,16 @@ export function validarSparring(data) {
     duracaoMmSs: String(data.duracaoMmSs).trim(),
     nivelSparring: ns,
     inicio: data.inicio,
+    parceiroTreino: parceiro
+      ? {
+          id: parceiro.id?.trim() || null,
+          nome: String(parceiro.nome ?? '').trim(),
+          sexo: parceiro.sexo,
+          aniversario: String(parceiro.aniversario ?? '').trim(),
+          faixa: /** @type {ParceiroTreinoFaixa} */ (String(parceiro.faixa ?? '').toLowerCase()),
+          pesoKg: Number(parceiro.pesoKg),
+        }
+      : undefined,
     observacoes: data.observacoes?.trim() || undefined,
     acoes: acoes.map((a) => ({
       acaoTecnicaId: a.acaoTecnicaId?.trim() || null,
@@ -105,6 +152,7 @@ export function sparringPadrao() {
     duracaoMmSs: SPARRING_DURACAO_PADRAO,
     nivelSparring: 2,
     inicio: SPARRING_INICIO.GUARDA,
+    parceiroTreino: undefined,
     observacoes: undefined,
     acoes: [],
   };

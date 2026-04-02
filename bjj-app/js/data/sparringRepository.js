@@ -1,5 +1,6 @@
 import { parseDuracaoMmSs } from '../domain/sparring.js';
 import { encontrarOuCriarAcaoTecnica } from './acaoTecnicaRepository.js';
+import { encontrarOuCriarParceiroTreino } from './parceiroTreinoRepository.js';
 
 /**
  * @typedef {import('../domain/sparring.js').SparringInput} SparringInput
@@ -50,6 +51,11 @@ export class SparringRepository {
       const dur = parseDuracaoMmSs(sp.duracaoMmSs);
       if (!dur.ok) throw new Error(dur.erro);
 
+      let parceiroTreinoId = sp.parceiroTreino?.id?.trim() || null;
+      if (!parceiroTreinoId && sp.parceiroTreino) {
+        parceiroTreinoId = await encontrarOuCriarParceiroTreino(this.client, sp.parceiroTreino, userId);
+      }
+
       const { data: row, error } = await this.client
         .from('sparring')
         .insert({
@@ -58,6 +64,7 @@ export class SparringRepository {
           duracao_segundos: dur.segundos,
           nivel_sparring: sp.nivelSparring,
           inicio: sp.inicio,
+          parceiro_treino_id: parceiroTreinoId,
           observacoes: sp.observacoes ?? null,
           ordem: i,
         })

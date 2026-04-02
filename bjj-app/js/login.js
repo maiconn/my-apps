@@ -1,4 +1,5 @@
 import { getSupabaseClient } from './data/supabaseClient.js';
+import { withLoader } from './ui/loader.js';
 
 async function main() {
   let client;
@@ -26,10 +27,12 @@ async function main() {
     btn.disabled = true;
     btn.textContent = 'Redirecionando...';
     const redirectTo = new URL('index.html', window.location.href).href;
-    const { error } = await client.auth.signInWithOAuth({
-      provider: 'google',
-      options: { redirectTo },
-    });
+    const { error } = await withLoader(() =>
+      client.auth.signInWithOAuth({
+        provider: 'google',
+        options: { redirectTo },
+      }),
+    );
     if (error) {
       if (errorEl) errorEl.textContent = error.message;
       btn.disabled = false;
