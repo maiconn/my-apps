@@ -436,7 +436,7 @@ function mapearParceiro(row) {
  */
 function normalizarFaixa(faixa) {
   const s = String(faixa ?? '').toLowerCase();
-  if (s === 'azul' || s === 'marrom' || s === 'preta') return s;
+  if (s === 'azul' || s === 'roxa' || s === 'marrom' || s === 'preta') return s;
   return 'branca';
 }
 

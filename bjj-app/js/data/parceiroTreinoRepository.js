@@ -4,7 +4,7 @@
 
 /**
  * @typedef {'M' | 'F'} ParceiroTreinoSexo
- * @typedef {'branca' | 'azul' | 'marrom' | 'preta'} ParceiroTreinoFaixa
+ * @typedef {'branca' | 'azul' | 'roxa' | 'marrom' | 'preta'} ParceiroTreinoFaixa
  *
  * @typedef {{
  *   id: string,
@@ -97,6 +97,6 @@ export async function encontrarOuCriarParceiroTreino(client, parceiro, userId) {
  */
 function normalizarFaixa(faixa) {
   const s = String(faixa ?? '').toLowerCase();
-  if (s === 'azul' || s === 'marrom' || s === 'preta') return s;
+  if (s === 'azul' || s === 'roxa' || s === 'marrom' || s === 'preta') return s;
   return 'branca';
 }

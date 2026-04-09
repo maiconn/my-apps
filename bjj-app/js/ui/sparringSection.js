@@ -108,6 +108,7 @@ export async function mountSparringSection(client, container, options) {
           <select name="parceiro-faixa">
             <option value="branca" ${parceiro?.faixa === 'branca' || !parceiro?.faixa ? 'selected' : ''}>Branca</option>
             <option value="azul" ${parceiro?.faixa === 'azul' ? 'selected' : ''}>Azul</option>
+            <option value="roxa" ${parceiro?.faixa === 'roxa' ? 'selected' : ''}>Roxa</option>
             <option value="marrom" ${parceiro?.faixa === 'marrom' ? 'selected' : ''}>Marrom</option>
             <option value="preta" ${parceiro?.faixa === 'preta' ? 'selected' : ''}>Preta</option>
           </select>
@@ -327,7 +328,7 @@ export async function mountSparringSection(client, container, options) {
                   nome: /** @type {HTMLInputElement} */ (card.querySelector('[name=parceiro-nome]')).value.trim(),
                   sexo: /** @type {HTMLSelectElement} */ (card.querySelector('[name=parceiro-sexo]')).value === 'F' ? 'F' : 'M',
                   aniversario: /** @type {HTMLInputElement} */ (card.querySelector('[name=parceiro-aniversario]')).value,
-                  faixa: /** @type {'branca' | 'azul' | 'marrom' | 'preta'} */ (
+                  faixa: /** @type {'branca' | 'azul' | 'roxa' | 'marrom' | 'preta'} */ (
                     /** @type {HTMLSelectElement} */ (card.querySelector('[name=parceiro-faixa]')).value
                   ),
                   pesoKg: Number(/** @type {HTMLInputElement} */ (card.querySelector('[name=parceiro-peso]')).value),

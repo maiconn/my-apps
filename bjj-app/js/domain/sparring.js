@@ -4,7 +4,7 @@
 
 /** @typedef {{ acaoTecnicaId?: string | null, acaoTecnicaNome?: string | null, falha: number, parcial: number, sucesso: number }} AcaoTecnicaContagem */
 /** @typedef {'M' | 'F'} ParceiroTreinoSexo */
-/** @typedef {'branca' | 'azul' | 'marrom' | 'preta'} ParceiroTreinoFaixa */
+/** @typedef {'branca' | 'azul' | 'roxa' | 'marrom' | 'preta'} ParceiroTreinoFaixa */
 /** @typedef {{ id?: string | null, nome: string, sexo: ParceiroTreinoSexo, aniversario: string, faixa: ParceiroTreinoFaixa, pesoKg: number }} ParceiroTreinoInput */
 
 /**
@@ -87,8 +87,8 @@ export function validarSparring(data) {
     }
 
     const faixa = String(parceiro.faixa ?? '').toLowerCase();
-    if (!['branca', 'azul', 'marrom', 'preta'].includes(faixa)) {
-      erros.push('Faixa do parceiro deve ser branca, azul, marrom ou preta.');
+    if (!['branca', 'azul', 'roxa', 'marrom', 'preta'].includes(faixa)) {
+      erros.push('Faixa do parceiro deve ser branca, azul, roxa, marrom ou preta.');
     }
 
     const peso = Number(parceiro.pesoKg);
