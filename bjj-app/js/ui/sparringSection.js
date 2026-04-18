@@ -2,6 +2,9 @@ import { listarAcoesTecnicas } from '../data/acaoTecnicaRepository.js';
 import { buscarParceirosTreinoPorPrefixo } from '../data/parceiroTreinoRepository.js';
 import { SPARRING_DURACAO_PADRAO, SPARRING_INICIO, sparringPadrao } from '../domain/sparring.js';
 import { showLoader, hideLoader } from './loader.js';
+import { escapeAttr } from './utils/escape.js';
+import { calcularIdade, formatarPesoKg } from './utils/format.js';
+import { capitalizarPrimeira, normalizarTexto } from './utils/string.js';
 
 /**
  * @param {import('@supabase/supabase-js').SupabaseClient} client
@@ -177,7 +180,7 @@ export async function mountSparringSection(client, container, options) {
         const b = document.createElement('button');
         b.type = 'button';
         b.className = 'autocomplete-item';
-        b.textContent = `${parceiroFound.nome} - ${capitalizar(parceiroFound.faixa)} - ${formatarPesoKg(
+        b.textContent = `${parceiroFound.nome} - ${capitalizarPrimeira(parceiroFound.faixa)} - ${formatarPesoKg(
           parceiroFound.pesoKg,
         )}`;
         b.addEventListener('mousedown', (ev) => ev.preventDefault());
@@ -262,12 +265,12 @@ export async function mountSparringSection(client, container, options) {
       const nomeInput = /** @type {HTMLInputElement} */ (row.querySelector('[name=acao-nome]'));
       if (!row.dataset.acaoId) {
         const nome = nomeInput.value.trim();
-        const found = acoesCatalogo.find((x) => x.nome.toLowerCase() === nome.toLowerCase());
+        const found = acoesCatalogo.find((x) => normalizarTexto(x.nome) === normalizarTexto(nome));
         if (found) row.dataset.acaoId = found.id;
       }
       nomeInput.addEventListener('blur', () => {
         const nome = nomeInput.value.trim();
-        const found = acoesCatalogo.find((x) => x.nome.toLowerCase() === nome.toLowerCase());
+        const found = acoesCatalogo.find((x) => normalizarTexto(x.nome) === normalizarTexto(nome));
         row.dataset.acaoId = found?.id ?? '';
       });
 
@@ -340,47 +343,4 @@ export async function mountSparringSection(client, container, options) {
       });
     },
   };
-}
-
-/**
- * @param {string} s
- */
-function escapeAttr(s) {
-  return s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
-}
-
-/**
- * @param {string} faixa
- */
-function capitalizar(faixa) {
-  const s = String(faixa ?? '');
-  return s ? `${s[0].toUpperCase()}${s.slice(1).toLowerCase()}` : '';
-}
-
-/**
- * @param {number} peso
- */
-function formatarPesoKg(peso) {
-  const v = Number(peso);
-  if (!Number.isFinite(v)) return '';
-  if (Number.isInteger(v)) return `${v}kg`;
-  return `${v.toFixed(1)}kg`;
-}
-
-/**
- * @param {string} iso
- */
-function calcularIdade(iso) {
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(iso ?? ''))) return NaN;
-  const [y, m, d] = iso.split('-').map(Number);
-  const nasc = new Date(y, m - 1, d);
-  if (nasc.getFullYear() !== y || nasc.getMonth() !== m - 1 || nasc.getDate() !== d) return NaN;
-
-  const hoje = new Date();
-  let idade = hoje.getFullYear() - y;
-  const aindaNaoFez =
-    hoje.getMonth() < nasc.getMonth() ||
-    (hoje.getMonth() === nasc.getMonth() && hoje.getDate() < nasc.getDate());
-  if (aindaNaoFez) idade -= 1;
-  return idade < 0 ? NaN : idade;
 }

@@ -2,6 +2,8 @@
  * Persistencia: parceiros de treino (autocomplete + find or create).
  */
 
+import { mapearParceiroTreino } from './utils/parceiroTreino.js';
+
 /**
  * @typedef {'M' | 'F'} ParceiroTreinoSexo
  * @typedef {'branca' | 'azul' | 'roxa' | 'marrom' | 'preta'} ParceiroTreinoFaixa
@@ -37,14 +39,7 @@ export async function buscarParceirosTreinoPorPrefixo(client, userId, termo, lim
 
   if (error) throw error;
 
-  return (data ?? []).map((row) => ({
-    id: String(row.id),
-    nome: String(row.nome),
-    sexo: row.sexo === 'F' ? 'F' : 'M',
-    aniversario: String(row.aniversario),
-    faixa: normalizarFaixa(row.faixa),
-    pesoKg: Number(row.peso_kg),
-  }));
+  return (data ?? []).map((row) => mapearParceiroTreino(/** @type {Record<string, unknown>} */ (row)));
 }
 
 /**
@@ -89,14 +84,4 @@ export async function encontrarOuCriarParceiroTreino(client, parceiro, userId) {
   if (eIns) throw eIns;
 
   return String(inserted.id);
-}
-
-/**
- * @param {unknown} faixa
- * @returns {ParceiroTreinoFaixa}
- */
-function normalizarFaixa(faixa) {
-  const s = String(faixa ?? '').toLowerCase();
-  if (s === 'azul' || s === 'roxa' || s === 'marrom' || s === 'preta') return s;
-  return 'branca';
 }

@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>BJJ — Calendário</title>
+    <title>BJJ - Sparrings por parceiro</title>
     <link rel="stylesheet" href="css/app.css" />
   </head>
   <body>
@@ -20,22 +20,26 @@
         <span class="app-nav-sep">·</span>
         <button type="button" class="btn btn-ghost btn-nav" id="btn-logout">Sair</button>
       </nav>
+
       <div class="auth-bar">
         <span id="auth-status" class="auth-email"></span>
       </div>
-      <h1>Calendário de treinos</h1>
-      <p class="sub">
-        Verde = treino registrado (clique para editar). Vermelho = sem registro (clique para cadastrar).
-      </p>
-      <div id="feedback-cal" class="feedback" role="status"></div>
-      <div class="cal-toolbar">
-        <button type="button" class="btn" id="cal-prev" aria-label="Mês anterior">←</button>
-        <h2 id="cal-title" class="cal-title"></h2>
-        <button type="button" class="btn" id="cal-next" aria-label="Próximo mês">→</button>
-      </div>
-      <div id="cal-weekdays" class="cal-weekdays"></div>
-      <div id="cal-grid" class="cal-grid"></div>
+
+      <h1>Registro de sparrings por parceiro</h1>
+      <p class="sub">Selecione um parceiro para visualizar totais e ações técnicas consolidadas.</p>
+      <div id="feedback-sparring-parceiro" class="feedback" role="status"></div>
+
+      <section aria-labelledby="titulo-parceiros">
+        <h2 id="titulo-parceiros">Parceiros cadastrados</h2>
+        <div class="partner-grid">
+          <div id="parceiros-lista" class="partner-list"></div>
+          <div id="parceiro-detalhes" class="partner-details">
+            <p class="text-muted mt-0">Escolha um parceiro na lista.</p>
+          </div>
+        </div>
+      </section>
     </main>
-    <script type="module" src="js/calendario.js"></script>
+
+    <script type="module" src="js/sparringsPorParceiro.js"></script>
   </body>
 </html>

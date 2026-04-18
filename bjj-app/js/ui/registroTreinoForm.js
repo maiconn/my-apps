@@ -1,4 +1,5 @@
 import { listarTiposTreino, listarVariacoesPorTipo } from '../data/tipoVariacaoRepository.js';
+import { normalizarTexto } from './utils/string.js';
 
 /**
  * @typedef {import('../domain/registroTreino.js').RegistroTreinoInput} RegistroTreinoInput
@@ -12,7 +13,7 @@ import { listarTiposTreino, listarVariacoesPorTipo } from '../data/tipoVariacaoR
  */
 export async function mountRegistroTreinoForm(client, container, options = {}) {
   const tipos = await listarTiposTreino(client);
-  const tiposMap = new Map(tipos.map((t) => [normalizar(t.nome), t]));
+  const tiposMap = new Map(tipos.map((t) => [normalizarTexto(t.nome), t]));
 
   const datalistTiposId = 'dl-tipos-treino';
   const base = document.createElement('div');
@@ -114,7 +115,7 @@ export async function mountRegistroTreinoForm(client, container, options = {}) {
     async function refreshVariacoes() {
       dlVar.innerHTML = '';
       const nomeTipo = tipoInput.value.trim();
-      const tipo = tiposMap.get(normalizar(nomeTipo));
+      const tipo = tiposMap.get(normalizarTexto(nomeTipo));
       wrap.dataset.tipoId = tipo?.id ?? '';
       wrap.dataset.variacaoId = '';
       if (!tipo?.id) return;
@@ -131,21 +132,21 @@ export async function mountRegistroTreinoForm(client, container, options = {}) {
     });
     tipoInput.addEventListener('blur', () => {
       const nomeTipo = tipoInput.value.trim();
-      const tipo = tiposMap.get(normalizar(nomeTipo));
+      const tipo = tiposMap.get(normalizarTexto(nomeTipo));
       wrap.dataset.tipoId = tipo?.id ?? '';
       void refreshVariacoes();
     });
 
     variacaoInput.addEventListener('blur', async () => {
       const nomeTipo = tipoInput.value.trim();
-      const tipo = tiposMap.get(normalizar(nomeTipo));
+      const tipo = tiposMap.get(normalizarTexto(nomeTipo));
       const nomeVar = variacaoInput.value.trim();
       if (!tipo?.id || !nomeVar) {
         wrap.dataset.variacaoId = '';
         return;
       }
       const vars = await listarVariacoesPorTipo(client, tipo.id);
-      const found = vars.find((v) => normalizar(v.nome) === normalizar(nomeVar));
+      const found = vars.find((v) => normalizarTexto(v.nome) === normalizarTexto(nomeVar));
       wrap.dataset.variacaoId = found?.id ?? '';
     });
 
@@ -242,11 +243,4 @@ export async function mountRegistroTreinoForm(client, container, options = {}) {
       };
     },
   };
-}
-
-/**
- * @param {string} s
- */
-function normalizar(s) {
-  return s.trim().toLowerCase();
 }

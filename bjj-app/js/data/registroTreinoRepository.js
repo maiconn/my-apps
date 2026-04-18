@@ -2,6 +2,7 @@ import {
   encontrarOuCriarTipoTreino,
   encontrarOuCriarVariacao,
 } from './tipoVariacaoRepository.js';
+import { mapearParceiroTreino } from './utils/parceiroTreino.js';
 
 /**
  * @typedef {import('../domain/registroTreino.js').RegistroTreinoInput} RegistroTreinoInput
@@ -332,14 +333,7 @@ async function carregarSparrings(client, registroId) {
         .maybeSingle();
       if (eParceiro) throw eParceiro;
       if (parceiro) {
-        parceiroTreino = {
-          id: String(parceiro.id),
-          nome: String(parceiro.nome),
-          sexo: parceiro.sexo === 'F' ? 'F' : 'M',
-          aniversario: String(parceiro.aniversario),
-          faixa: normalizarFaixa(parceiro.faixa),
-          pesoKg: Number(parceiro.peso_kg),
-        };
+        parceiroTreino = mapearParceiroTreino(/** @type {Record<string, unknown>} */ (parceiro));
       }
     }
 
@@ -421,23 +415,7 @@ function mapearParceiro(row) {
   if (!raw || Array.isArray(raw)) return undefined;
   const p = /** @type {Record<string, unknown>} */ (raw);
   if (!p.id) return undefined;
-  return {
-    id: String(p.id),
-    nome: String(p.nome ?? ''),
-    sexo: p.sexo === 'F' ? 'F' : 'M',
-    aniversario: String(p.aniversario ?? ''),
-    faixa: normalizarFaixa(p.faixa),
-    pesoKg: Number(p.peso_kg ?? 0),
-  };
-}
-
-/**
- * @param {unknown} faixa
- */
-function normalizarFaixa(faixa) {
-  const s = String(faixa ?? '').toLowerCase();
-  if (s === 'azul' || s === 'roxa' || s === 'marrom' || s === 'preta') return s;
-  return 'branca';
+  return mapearParceiroTreino(p);
 }
 
 export async function carregarRegistroCompleto(client, userId, registroId) {

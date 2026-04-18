@@ -2,6 +2,8 @@ import { getSupabaseClient } from './data/supabaseClient.js';
 import { requireAuth, signOut } from './auth.js';
 import { RegistroTreinoRepository } from './data/registroTreinoRepository.js';
 import { withLoader } from './ui/loader.js';
+import { limparFeedback, mostrarErroFeedback } from './utils/feedback.js';
+import { STORAGE_DATA_TREINO } from './utils/storage.js';
 
 const monthNames = [
   'Janeiro',
@@ -20,24 +22,11 @@ const monthNames = [
 
 const weekLabels = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
 
-/** Mesma chave que em main.js — fallback se a URL perder ?data= */
-const STORAGE_DATA_TREINO = 'bjj-treino-data-iso';
-
 /**
  * @param {number} n
  */
 function pad2(n) {
   return String(n).padStart(2, '0');
-}
-
-/**
- * @param {HTMLElement | null} el
- * @param {string} msg
- */
-function showErr(el, msg) {
-  if (!el) return;
-  el.textContent = msg;
-  el.className = 'feedback visible err';
 }
 
 async function main() {
@@ -52,7 +41,7 @@ async function main() {
   try {
     client = getSupabaseClient();
   } catch (e) {
-    showErr(feedbackCal, String(/** @type {Error} */ (e).message));
+    mostrarErroFeedback(feedbackCal, String(/** @type {Error} */ (e).message));
     return;
   }
 
@@ -83,17 +72,14 @@ async function main() {
     if (titleEl) {
       titleEl.textContent = `${monthNames[month - 1]} ${year}`;
     }
-    if (feedbackCal) {
-      feedbackCal.className = 'feedback';
-      feedbackCal.textContent = '';
-    }
+    limparFeedback(feedbackCal);
 
     let rows;
     try {
       rows = await withLoader(() => regRepo.listByMonth(userId, year, month));
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
-      showErr(feedbackCal, msg);
+      mostrarErroFeedback(feedbackCal, msg);
       return;
     }
 

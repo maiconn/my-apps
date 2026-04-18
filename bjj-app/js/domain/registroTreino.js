@@ -3,6 +3,8 @@
  * Inclui pares tipo de treino + variação (múltiplos por registro).
  */
 
+import { trimToNull } from './utils/string.js';
+
 /** @typedef {{ tipoTreinoId?: string | null, tipoTreinoNome?: string | null, variacaoId?: string | null, variacaoNome?: string | null }} ItemTipoVariacao */
 
 /**
@@ -29,22 +31,12 @@ const SLIDER_MIN = 1;
 const SLIDER_MAX = 5;
 
 /**
- * @param {unknown} n
- * @returns {string|null}
- */
-function trimStr(n) {
-  if (n == null) return null;
-  const s = String(n).trim();
-  return s === '' ? null : s;
-}
-
-/**
  * @param {ItemTipoVariacao} item
  * @returns {boolean}
  */
 export function itemTipoVariacaoTemTipo(item) {
-  const id = trimStr(item.tipoTreinoId);
-  const nome = trimStr(item.tipoTreinoNome);
+  const id = trimToNull(item.tipoTreinoId);
+  const nome = trimToNull(item.tipoTreinoNome);
   return Boolean(id || nome);
 }
 
@@ -53,8 +45,8 @@ export function itemTipoVariacaoTemTipo(item) {
  * @returns {boolean}
  */
 export function itemTipoVariacaoTemVariacao(item) {
-  const id = trimStr(item.variacaoId);
-  const nome = trimStr(item.variacaoNome);
+  const id = trimToNull(item.variacaoId);
+  const nome = trimToNull(item.variacaoNome);
   return Boolean(id || nome);
 }
 
@@ -105,14 +97,14 @@ export function validarRegistroTreino(data) {
   const value = {
     modalidade: modalidade,
     itensTipoVariacao: itens.map((item) => ({
-      tipoTreinoId: trimStr(item.tipoTreinoId),
-      tipoTreinoNome: trimStr(item.tipoTreinoNome),
-      variacaoId: trimStr(item.variacaoId),
-      variacaoNome: trimStr(item.variacaoNome),
+      tipoTreinoId: trimToNull(item.tipoTreinoId),
+      tipoTreinoNome: trimToNull(item.tipoTreinoNome),
+      variacaoId: trimToNull(item.variacaoId),
+      variacaoNome: trimToNull(item.variacaoNome),
     })),
-    tecnicaAprendida: trimStr(data.tecnicaAprendida) ?? undefined,
+    tecnicaAprendida: trimToNull(data.tecnicaAprendida) ?? undefined,
     nivelEntendimento: ne,
-    duvidas: trimStr(data.duvidas) ?? undefined,
+    duvidas: trimToNull(data.duvidas) ?? undefined,
     nivelEnergia: ee,
     nivelFoco: nf,
   };

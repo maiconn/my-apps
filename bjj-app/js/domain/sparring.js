@@ -2,6 +2,9 @@
  * Entidade de domínio: Sparring (ligado a um RegistroTreino).
  */
 
+import { normalizarFaixaParceiro } from './utils/parceiro.js';
+import { trimToNull } from './utils/string.js';
+
 /** @typedef {{ acaoTecnicaId?: string | null, acaoTecnicaNome?: string | null, falha: number, parcial: number, sucesso: number }} AcaoTecnicaContagem */
 /** @typedef {'M' | 'F'} ParceiroTreinoSexo */
 /** @typedef {'branca' | 'azul' | 'roxa' | 'marrom' | 'preta'} ParceiroTreinoFaixa */
@@ -66,7 +69,7 @@ export function validarSparring(data) {
 
   const parceiro = data.parceiroTreino;
   if (parceiro) {
-    const nomeParceiro = String(parceiro.nome ?? '').trim();
+    const nomeParceiro = trimToNull(parceiro.nome);
     if (!nomeParceiro) {
       erros.push('Nome do parceiro é obrigatório.');
     }
@@ -86,7 +89,7 @@ export function validarSparring(data) {
       }
     }
 
-    const faixa = String(parceiro.faixa ?? '').toLowerCase();
+    const faixa = normalizarFaixaParceiro(parceiro.faixa);
     if (!['branca', 'azul', 'roxa', 'marrom', 'preta'].includes(faixa)) {
       erros.push('Faixa do parceiro deve ser branca, azul, roxa, marrom ou preta.');
     }
@@ -123,18 +126,18 @@ export function validarSparring(data) {
     inicio: data.inicio,
     parceiroTreino: parceiro
       ? {
-          id: parceiro.id?.trim() || null,
+          id: trimToNull(parceiro.id),
           nome: String(parceiro.nome ?? '').trim(),
           sexo: parceiro.sexo,
           aniversario: String(parceiro.aniversario ?? '').trim(),
-          faixa: /** @type {ParceiroTreinoFaixa} */ (String(parceiro.faixa ?? '').toLowerCase()),
+          faixa: /** @type {ParceiroTreinoFaixa} */ (normalizarFaixaParceiro(parceiro.faixa)),
           pesoKg: Number(parceiro.pesoKg),
         }
       : undefined,
     observacoes: data.observacoes?.trim() || undefined,
     acoes: acoes.map((a) => ({
-      acaoTecnicaId: a.acaoTecnicaId?.trim() || null,
-      acaoTecnicaNome: a.acaoTecnicaNome?.trim() || null,
+      acaoTecnicaId: trimToNull(a.acaoTecnicaId),
+      acaoTecnicaNome: trimToNull(a.acaoTecnicaNome),
       falha: Number(a.falha),
       parcial: Number(a.parcial),
       sucesso: Number(a.sucesso),
