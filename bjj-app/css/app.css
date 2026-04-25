@@ -574,12 +574,55 @@ textarea {
   font-variant-numeric: tabular-nums;
 }
 
+.resumo-filtro-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.resumo-custom-periodo {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.resumo-custom-periodo[hidden] {
+  display: none;
+}
+
+.btn-link {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--accent);
+  cursor: pointer;
+  padding: 0;
+  font: inherit;
+  text-align: left;
+}
+
+.btn-link:hover {
+  text-decoration: underline;
+}
+
+.acao-resumo-row.is-active {
+  background: #202531;
+}
+
+.acao-select-btn {
+  width: 100%;
+}
+
 @media (max-width: 760px) {
   .partner-grid {
     grid-template-columns: 1fr;
   }
 
   .partner-data {
+    grid-template-columns: 1fr;
+  }
+
+  .resumo-custom-periodo {
     grid-template-columns: 1fr;
   }
 }

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>BJJ - Resumo tecnico</title>
+    <link rel="stylesheet" href="css/app.css" />
+  </head>
+  <body>
+    <div id="app-loader" class="app-loader" hidden aria-hidden="true">
+      <div class="app-loader-spinner"></div>
+    </div>
+    <main>
+      <nav class="app-nav">
+        <a href="index.html">Calendario</a>
+        <span class="app-nav-sep">·</span>
+        <a href="registrar-treino.html">Registro de treino</a>
+        <span class="app-nav-sep">·</span>
+        <a href="sparrings-por-parceiro.html">Sparrings por parceiro</a>
+        <span class="app-nav-sep">·</span>
+        <a href="resumo-tecnico.html">Resumo tecnico</a>
+        <span class="app-nav-sep">·</span>
+        <button type="button" class="btn btn-ghost btn-nav" id="btn-logout">Sair</button>
+      </nav>
+
+      <div class="auth-bar">
+        <span id="auth-status" class="auth-email"></span>
+      </div>
+
+      <h1>Resumo tecnico</h1>
+      <p class="sub">Visualize as acoes tecnicas mais aplicadas no periodo selecionado.</p>
+      <div id="feedback-resumo-tecnico" class="feedback" role="status"></div>
+
+      <section aria-labelledby="titulo-filtro-resumo">
+        <h2 id="titulo-filtro-resumo">Periodo</h2>
+        <div class="resumo-filtro-grid">
+          <div class="row">
+            <label for="periodo-tipo">Selecionar periodo</label>
+            <select id="periodo-tipo">
+              <option value="ultimos-7" selected>Ultima semana</option>
+              <option value="ultimos-15">Ultimos 15 dias</option>
+              <option value="ultimos-30">Ultimos 30 dias</option>
+              <option value="custom">Selecionar datas especificas</option>
+              <option value="todos">Todos os registros</option>
+            </select>
+          </div>
+
+          <div id="periodo-custom-fields" class="resumo-custom-periodo" hidden>
+            <div class="row">
+              <label for="periodo-inicio">Data inicio</label>
+              <input id="periodo-inicio" type="date" />
+            </div>
+            <div class="row">
+              <label for="periodo-fim">Data fim</label>
+              <input id="periodo-fim" type="date" />
+            </div>
+          </div>
+
+          <div class="actions mt-0">
+            <button type="button" class="btn btn-primary" id="btn-aplicar-periodo">Aplicar filtro</button>
+          </div>
+        </div>
+      </section>
+
+      <section aria-labelledby="titulo-resumo-acoes">
+        <h2 id="titulo-resumo-acoes">Acoes tecnicas no periodo</h2>
+        <p id="resumo-periodo-legenda" class="text-muted mt-0"></p>
+        <table class="acoes-table">
+          <thead>
+            <tr>
+              <th>Acao tecnica</th>
+              <th class="num">Total de acoes</th>
+              <th class="num">Falha</th>
+              <th class="num">Parcial</th>
+              <th class="num">Sucesso</th>
+            </tr>
+          </thead>
+          <tbody id="resumo-acoes-body">
+            <tr>
+              <td colspan="5" class="text-muted">Nenhum dado carregado.</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section aria-labelledby="titulo-detalhes-acao">
+        <h2 id="titulo-detalhes-acao">Detalhes da acao tecnica</h2>
+        <p id="resumo-acao-titulo" class="text-muted mt-0">Selecione uma acao tecnica para ver os parceiros consolidados.</p>
+        <table class="acoes-table">
+          <thead>
+            <tr>
+              <th>Parceiro</th>
+              <th class="num">Total de acoes</th>
+              <th class="num">Falha</th>
+              <th class="num">Parcial</th>
+              <th class="num">Sucesso</th>
+            </tr>
+          </thead>
+          <tbody id="resumo-parceiros-body">
+            <tr>
+              <td colspan="5" class="text-muted">Nenhuma acao selecionada.</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+
+    <script type="module" src="js/resumoTecnico.js"></script>
+  </body>
+</html>
