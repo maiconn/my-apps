@@ -321,30 +321,27 @@
     // MUSCULAÇÃO
     const BASE = {
       A: [
-        { nome: 'Agachamento Terra', series: 4, reps: '8', intervalo: 120 },
-        { nome: 'Supino inclinado halteres', series: 4, reps: '8', intervalo: 120 },
-        { nome: 'Barra fixa neutra / puxada neutra', series: 4, reps: '8', intervalo: 120 },
-        { nome: 'Agachamento búlgaro', series: 3, reps: '6 por perna', intervalo: 90 },
-        { nome: 'Mesa flexora', series: 3, reps: '8', intervalo: 60 },
-        { nome: 'Rotação lateral', series: 3, reps: '10', intervalo: 45 },
-        { nome: 'Prancha lateral', series: 2, reps: '30 s', intervalo: 30 },
+        { nome: 'Agachamento Livre', series: 4, reps: '8', intervalo: 120 },
+        { nome: 'Barra fixa pronada / Puxada frontal', series: 4, reps: '8', intervalo: 90 },
+        { nome: 'Afundo búlgaro', series: 3, reps: '10 por perna', intervalo: 90 },
+        { nome: 'Remada curvada', series: 4, reps: '8', intervalo: 90 },
+        { nome: 'Pallof Press na polia', series: 3, reps: '12 por lado', intervalo: 60 },
       ],
+    
       B: [
-        { nome: 'Face Pull', series: 3, reps: '10', intervalo: 45 },
-        { nome: 'Rotação externa', series: 3, reps: '12 por lado', intervalo: 30 },
-        { nome: 'Panturrilha em pé', series: 3, reps: '15', intervalo: 45 },
-        { nome: 'Tibialis Raise', series: 3, reps: '12', intervalo: 40 },
-        { nome: 'Dead Bug', series: 3, reps: '8 por lado', intervalo: 30 },
-        { nome: 'Copenhagen plank curta', series: 3, reps: '20 s por lado', intervalo: 40 },
+        { nome: 'Leg Press explosivo', series: 4, reps: '8', intervalo: 90 },
+        { nome: 'Supino reto', series: 4, reps: '8', intervalo: 120 },
+        { nome: 'Remada baixa', series: 3, reps: '10', intervalo: 90 },
+        { nome: 'Desenvolvimento máquina / halteres', series: 3, reps: '10', intervalo: 90 },
+        { nome: 'Crunch na polia', series: 3, reps: '12', intervalo: 60 },
       ],
+    
       C: [
-        { nome: 'Arremesso rotacional medicine ball', series: 4, reps: '4 por lado', intervalo: 75 }, // us. topo do range (1:00–1:15)
-        { nome: 'Box Jump', series: 4, reps: '3', intervalo: 90 }, // us. topo do range (1:00–1:30)
-        { nome: 'Front Squat speed', series: 5, reps: '3', intervalo: 120 },
-        { nome: 'Push Press', series: 4, reps: '3', intervalo: 120 }, // us. topo do range (1:30–2:00)
-        { nome: 'Remada apoiada', series: 3, reps: '6', intervalo: 90 }, // us. topo do range (1:15–1:30)
-        { nome: 'Hip Thrust', series: 3, reps: '6', intervalo: 90 }, // us. topo do range (1:15–1:30)
-        { nome: 'Farmer Carry leve/moderado', series: 2, reps: '20–25 m', intervalo: 60 },
+        { nome: 'Terra romeno', series: 4, reps: '8', intervalo: 120 },
+        { nome: 'Barra fixa neutra / Puxada frontal', series: 4, reps: '8', intervalo: 90 },
+        { nome: 'Passada caminhando', series: 3, reps: '10 por perna', intervalo: 90 },
+        { nome: 'Paralelas / Supino inclinado', series: 3, reps: '10', intervalo: 90 },
+        { nome: 'Farmer Carry', series: 3, reps: '30–40 m', intervalo: 60 },
       ],
     };
 
@@ -438,10 +435,10 @@
       `;
       cont.appendChild(header);
 
-      let sep = document.createElement('div'); sep.className = 'card'; sep.innerHTML = `<h2>AQUECIMENTO/MOBILIDADE</h2>`; 
-      cont.appendChild(sep);
-      MOB_BY_TAB[t].forEach((ex) => cont.appendChild(makeExerciseCard(t, ex)));
-      sep = document.createElement('div'); sep.className = 'card'; sep.innerHTML = `<h2>TREINO PRINCIPAL</h2>`; 
+      // let sep = document.createElement('div'); sep.className = 'card'; sep.innerHTML = `<h2>AQUECIMENTO/MOBILIDADE</h2>`; 
+      // cont.appendChild(sep);
+      // MOB_BY_TAB[t].forEach((ex) => cont.appendChild(makeExerciseCard(t, ex)));
+      // sep = document.createElement('div'); sep.className = 'card'; sep.innerHTML = `<h2>TREINO PRINCIPAL</h2>`; 
       cont.appendChild(sep);
       BASE[t].forEach((ex) => cont.appendChild(makeExerciseCard(t, ex)));
     }
