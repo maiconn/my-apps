@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Plus+Jakarta+Sans:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base { html, body { margin: 0; padding: 0; } body { overscroll-behavior: none; } main > :first-child { margin-top: 0 !important; } main > :last-child { margin-bottom: 0 !important; } } ::-webkit-scrollbar { display: none; }</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "surface-tint": "#006d33", "pale-sage": "#EAF5EE", "on-primary-fixed": "#00210b", "on-tertiary-fixed": "#022015", "surface-bright": "#faf9f6", "surface-dim": "#dbdad7", "outline-variant": "#becabc", "secondary": "#984446", "secondary-fixed": "#ffdad9", "on-tertiary-container": "#1b382b", "error-container": "#ffdad6", "on-surface-variant": "#3f493f", "on-error-container": "#93000a", "surface-container-highest": "#e3e2e0", "on-error": "#ffffff", "secondary-container": "#ff9696", "on-background": "#1a1c1a", "border-subtle": "#E4ECE7", "inverse-on-surface": "#f2f1ee", "tertiary-container": "#83a291", "secondary-fixed-dim": "#ffb3b2", "coral-subtle": "#FDF2F2", "on-secondary-container": "#782c2e", "on-surface": "#1a1c1a", "surface-container-high": "#e9e8e5", "surface-white": "#FFFFFF", "on-primary-fixed-variant": "#005224", "surface": "#faf9f6", "inverse-surface": "#2f312f", "on-primary-container": "#003c19", "warm-coral": "#F89090", "error": "#ba1a1a", "surface-container-low": "#f4f3f1", "surface-container": "#efeeeb", "primary-fixed": "#96f8aa", "tertiary-fixed": "#c9ead7", "on-tertiary-fixed-variant": "#304d3f", "text-muted": "#5C7368", "outline": "#6f7a6e", "on-secondary-fixed": "#3f0209", "on-secondary": "#ffffff", "on-tertiary": "#ffffff", "canvas-cream": "#FAF9F6", "on-primary": "#ffffff", "deep-forest": "#1B382B", "tertiary-fixed-dim": "#adcebc", "on-secondary-fixed-variant": "#7a2d30", "primary-container": "#4eae68", "tertiary": "#476556", "surface-variant": "#e3e2e0", "inverse-primary": "#7adb90", "surface-container-lowest": "#ffffff", "primary": "#006d33", "primary-fixed-dim": "#7adb90", "background": "#faf9f6", "soft-sage": "#4EAE68" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "gutter": "1.5rem", "gutter-sm": "1rem", "space-3xl": "6rem", "margin-desktop": "3rem", "margin": "2rem", "space-xl": "2.5rem", "space-xs": "0.25rem", "space-2xl": "4rem", "space-md": "1rem", "space-lg": "1.5rem", "space-sm": "0.5rem", "margin-mobile": "1.25rem" }, "fontFamily": { "body-md": ["Inter"], "label-md": ["Plus Jakarta Sans"], "headline-md": ["Plus Jakarta Sans"], "label-lg": ["Plus Jakarta Sans"], "display": ["Plus Jakarta Sans"], "headline-sm": ["Plus Jakarta Sans"], "title": ["Plus Jakarta Sans"], "headline-lg": ["Plus Jakarta Sans"], "body-sm": ["Inter"], "display-mobile": ["Plus Jakarta Sans"], "headline-lg-mobile": ["Plus Jakarta Sans"], "body-lg": ["Inter"], "label-sm": ["Plus Jakarta Sans"] }, "fontSize": { "body-md": ["16px", { "lineHeight": "26px", "fontWeight": "400" }], "label-md": ["13px", { "lineHeight": "18px", "letterSpacing": "0.02em", "fontWeight": "600" }], "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "label-lg": ["15px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }], "display": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }], "title": ["18px", { "lineHeight": "26px", "fontWeight": "600" }], "headline-lg": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.015em", "fontWeight": "700" }], "body-sm": ["14px", { "lineHeight": "22px", "fontWeight": "400" }], "display-mobile": ["34px", { "lineHeight": "42px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "headline-lg-mobile": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.015em", "fontWeight": "700" }], "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }], "label-sm": ["11px", { "lineHeight": "16px", "letterSpacing": "0.04em", "fontWeight": "700" }] } } } }</script></head><body class="bg-background font-body-md text-body-md text-on-surface antialiased"><header class="fixed top-0 left-0 right-0 z-50 bg-surface/90 backdrop-blur-md shadow-[0_4px_20px_-2px_rgba(27,56,43,0.05)]"><div class="h-20 max-w-[1200px] mx-auto px-margin-mobile lg:px-margin-desktop flex items-center justify-between gap-4"><div class="flex items-center gap-3"><img alt="logo.png" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1UuEkWCDJuKx_5dphL2dA_k9hRZWKB0ZJUv1Hzq3FasBlD8uh3EK_dlpB159bGE7XluD1u04lQ3N4rbv2sRvXJzjo8_rfReduSgKZZ2iCgFIok6593kaM6aHE6Y_ziwlHgvxNPR70r5Ep6ZbIwHiYLm0Dm2lpxEyf4i1DhDCELnvFjO5VtKBroHVK_Ck3_Wkmlya4xP30TWmcQBiH35ocg3IULo80c1FKo5Phrfd2Vyk3Atv4xTgK2-MsZaJjvuTJLFl5IjI6pEgF8"/><div class="flex flex-col"><span class="font-title text-title text-deep-forest font-bold leading-tight">Vet na Porta</span><span class="font-label-sm text-label-sm text-text-muted hidden sm:inline-block">Atendimento Veterinário Domiciliar</span></div></div><nav class="hidden xl:flex items-center gap-space-lg" data-active-classes="text-primary font-bold"><a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" data-path="inicio" href="#inicio">Início</a><a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" data-path="sobre-a-dra" href="#sobre">Sobre a Dra.</a><a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" data-path="servicos" href="#servicos">Serviços</a><a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" data-path="depoimentos" href="#depoimentos">Depoimentos</a><a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" data-path="faq" href="#faq">FAQ</a><a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" data-path="contato" href="#contato">Contato</a></nav><div class="flex items-center gap-3"><a class="hidden sm:inline-flex items-center justify-center gap-space-xs px-space-lg py-space-sm bg-primary hover:bg-on-primary-container text-on-primary font-label-md text-label-md rounded-full shadow-[0_8px_24px_-2px_rgba(78,174,104,0.25)] transition-all hover:-translate-y-0.5" href="https://wa.me/5547992327390?text=Ol%C3%A1%2C%20gostaria%20de%20agendar%20uma%20consulta%20domiciliar" rel="noopener noreferrer" target="_blank"><span class="material-symbols-outlined text-[18px]">chat</span><span>Agendar no WhatsApp</span></a><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-20 bg-background"><div class="flex flex-col w-full">
+<!-- WhatsApp Floating Trigger Button -->
+<aside class="fixed bottom-6 right-6 z-50 flex items-center group">
+<div class="hidden md:flex mr-3 bg-surface-white/95 backdrop-blur-md px-4 py-2 rounded-full shadow-[0_8px_24px_-2px_rgba(27,56,43,0.12)] border-0 items-center gap-2 pointer-events-none transition-all duration-300 opacity-90 group-hover:opacity-100 group-hover:-translate-x-1">
+<span class="w-2 h-2 rounded-full bg-[#25D366] animate-ping"></span>
+<span class="font-label-md text-label-md text-deep-forest font-semibold">Agendar no WhatsApp</span>
+</div>
+<a aria-label="Abrir conversa no WhatsApp" class="w-14 h-14 rounded-full bg-[#25D366] hover:bg-[#20b859] text-surface-white flex items-center justify-center shadow-[0_10px_28px_rgba(37,211,102,0.4)] transition-all duration-300 hover:scale-105 active:scale-95" href="https://wa.me/5547992327390?text=Ol%C3%A1%2C%20gostaria%20de%20agendar%20uma%20consulta%20domiciliar%20com%20a%20Dra.%20Milena" rel="noopener noreferrer" target="_blank">
+<svg class="w-8 h-8 fill-current" viewbox="0 0 24 24">
+<path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.007c.107.005.25-.041.39.293.144.347.49 1.198.533 1.285.043.087.072.188.014.303-.058.116-.087.188-.173.289l-.26.302c-.086.087-.177.181-.076.355.101.174.45 1.026 1.134 1.636.88.784 1.488.948 1.701 1.035.213.087.338.072.463-.072.125-.145.534-.622.678-.839.144-.216.289-.173.49-.101.202.072 1.282.605 1.502.715.22.11.366.165.419.256.054.091.054.529-.09 1.017zM12 2C6.477 2 2 6.477 2 12c0 1.891.524 3.66 1.434 5.176L2 22l4.954-1.398A9.957 9.957 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2z"></path>
+</svg>
+</a>
+</aside>
+<!-- 1. HERO SECTION -->
+<section class="relative w-full overflow-hidden bg-gradient-to-b from-pale-sage/40 via-background to-background py-space-2xl lg:py-space-3xl" id="inicio">
+<!-- Decorative organic background shapes -->
+<div class="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-soft-sage/10 blur-3xl pointer-events-none"></div>
+<div class="absolute top-1/2 -left-20 w-80 h-80 rounded-full bg-coral-subtle/70 blur-2xl pointer-events-none"></div>
+<div class="max-w-[1200px] mx-auto px-margin-mobile lg:px-margin-desktop">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-y-12 lg:gap-x-12 items-center">
+<!-- Text Column -->
+<div class="lg:col-span-7 flex flex-col items-start">
+<div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-surface-white shadow-sm mb-space-md">
+<span class="material-symbols-outlined text-[18px] text-soft-sage" style="font-variation-settings: 'FILL' 1;">pets</span>
+<span class="font-label-md text-label-md text-deep-forest">Atendimento domiciliar para cães e gatos em Blumenau e região</span>
+</div>
+<h1 class="font-display text-display text-deep-forest mb-space-md tracking-tight">
+            Cuidado veterinário profissional, <span class="text-primary font-bold">direto na porta</span> da sua casa
+          </h1>
+<p class="font-body-lg text-body-lg text-text-muted mb-space-xl max-w-xl">
+            Evite o estresse do transporte e da sala de espera. A Dra. Milena atende seu pet em casa, com atenção individualizada, orientações claras e todo o cuidado que ele merece.
+          </p>
+<!-- CTAs -->
+<div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-space-sm w-full sm:w-auto mb-space-xl">
+<a class="inline-flex items-center justify-center gap-2 px-8 py-4 bg-primary hover:bg-on-primary-container text-on-primary font-label-lg text-label-lg rounded-full shadow-[0_8px_24px_-2px_rgba(0,109,51,0.3)] transition-all hover:-translate-y-0.5" href="https://wa.me/5547992327390?text=Ol%C3%A1%2C%20quero%20agendar%20uma%20consulta%20domiciliar" rel="noopener noreferrer" target="_blank">
+<span class="material-symbols-outlined text-[20px]">calendar_month</span>
+<span>Quero agendar uma consulta</span>
+</a>
+<a class="inline-flex items-center justify-center gap-2 px-8 py-4 bg-surface-white hover:bg-pale-sage text-deep-forest font-label-lg text-label-lg rounded-full shadow-sm transition-all" href="#servicos">
+<span>Conhecer os atendimentos</span>
+<span class="material-symbols-outlined text-[18px]">arrow_downward</span>
+</a>
+</div>
+<!-- Highlight Trust Badges -->
+<div class="grid grid-cols-3 gap-3 pt-space-md w-full max-w-lg">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-pale-sage flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">home</span>
+</div>
+<span class="font-label-md text-label-md text-deep-forest font-medium">Sem estresse</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-pale-sage flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">favorite</span>
+</div>
+<span class="font-label-md text-label-md text-deep-forest font-medium">No conforto</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-coral-subtle flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[18px]">star</span>
+</div>
+<span class="font-label-md text-label-md text-deep-forest font-medium">Nota 5.0 Google</span>
+</div>
+</div>
+</div>
+<!-- Image Presentation with Floating Cards -->
+<div class="lg:col-span-5 relative flex justify-center">
+<div class="relative w-full max-w-[380px] sm:max-w-[420px] aspect-[4/5] rounded-3xl overflow-hidden shadow-[0_20px_40px_-10px_rgba(27,56,43,0.15)] bg-surface-white">
+<img alt="Dra. Milena Kohhausch - Médica Veterinária" class="w-full h-full object-cover object-top" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAnt-v-vUv1yrafeXYo7RwXfeI29bXcihHkqBK7KIg8PJb7nj-xRn8rqP-uJ_u_IsTzrijwJhA05DBmT30yDSbL0sdDm14ELO-JMh_1Sih1tP22b1JvpO6zkQ1CtAMee-FTwBtmhvC-Zz-D_hdbc_Ye-pqmXUrkkLRi6sYsyOXyhwirOemPzHtfD3CK-w3Wq7kTgTQjiCCTM4zlQPxqebwCLmrU1RB7tm6a-8vUq0u9QTLpZX1m0llfFdJUlHg63d9B6Fs"/>
+<div class="absolute inset-0 bg-gradient-to-t from-deep-forest/50 via-transparent to-transparent"></div>
+<div class="absolute bottom-4 left-4 right-4 p-4 rounded-2xl bg-surface-white/95 backdrop-blur-md shadow-lg flex items-center justify-between">
+<div>
+<span class="font-title text-title text-deep-forest block leading-snug">Dra. Milena Kohhausch</span>
+<span class="font-label-sm text-label-sm text-text-muted">Médica-veterinária • CRMV-SC 10332</span>
+</div>
+<div class="flex items-center gap-1 bg-pale-sage px-2.5 py-1 rounded-full text-primary font-bold text-label-sm font-label-sm">
+<span class="material-symbols-outlined text-[16px] text-primary" style="font-variation-settings: 'FILL' 1;">star</span>
+<span>5.0</span>
+</div>
+</div>
+</div>
+<!-- Floating Badges -->
+<div class="hidden sm:flex absolute -top-4 -left-6 bg-surface-white px-4 py-3 rounded-2xl shadow-xl items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">health_and_safety</span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-deep-forest font-bold">100% Personalizado</p>
+<p class="font-body-sm text-body-sm text-text-muted">No tempo do seu animal</p>
+</div>
+</div>
+<div class="hidden sm:flex absolute -bottom-6 -right-6 bg-surface-white px-4 py-3 rounded-2xl shadow-xl items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-warm-coral/20 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined">favorite</span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-deep-forest font-bold">Menos Ansiedade</p>
+<p class="font-body-sm text-body-sm text-text-muted">Sem caixas de transporte</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 2. AUTORIDADE & QUEM É A DRA. MILENA -->
+<section class="w-full py-space-3xl bg-surface-white relative" id="sobre">
+<div class="max-w-[1200px] mx-auto px-margin-mobile lg:px-margin-desktop">
+<div class="text-center max-w-3xl mx-auto mb-space-2xl">
+<span class="font-label-md text-label-md text-primary tracking-wide uppercase font-semibold block mb-2">Quem Somos</span>
+<h2 class="font-headline-lg text-headline-lg text-deep-forest mb-space-md">
+          Experiência, carinho e atenção em cada atendimento
+        </h2>
+<p class="font-body-md text-body-md text-text-muted leading-relaxed">
+          Na Vet na Porta, cada pet é atendido de forma individualizada, respeitando seu comportamento, sua rotina e suas necessidades. O atendimento em casa permite que a avaliação aconteça em um ambiente conhecido pelo animal, reduzindo o desconforto causado pelo deslocamento e ajudando o tutor a participar de todo o processo com mais tranquilidade.
+        </p>
+</div>
+<!-- 4 Stat Metrics Bento Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-md mb-space-3xl">
+<div class="p-space-lg rounded-2xl bg-canvas-cream shadow-sm hover:shadow-md transition-shadow">
+<span class="material-symbols-outlined text-[32px] text-primary mb-3">pets</span>
+<span class="font-headline-lg text-headline-lg text-deep-forest font-bold block mb-1">500+</span>
+<span class="font-title text-title text-deep-forest font-semibold block mb-2">pets atendidos</span>
+<p class="font-body-sm text-body-sm text-text-muted">Cães e gatos cuidados com dedicação, atenção e respeito às suas necessidades individuais.</p>
+</div>
+<div class="p-space-lg rounded-2xl bg-canvas-cream shadow-sm hover:shadow-md transition-shadow">
+<span class="material-symbols-outlined text-[32px] text-primary mb-3">verified</span>
+<span class="font-headline-lg text-headline-lg text-deep-forest font-bold block mb-1">8+ anos</span>
+<span class="font-title text-title text-deep-forest font-semibold block mb-2">de experiência</span>
+<p class="font-body-sm text-body-sm text-text-muted">Experiência profissional dedicada à saúde, prevenção clínica e qualidade de vida animal.</p>
+</div>
+<div class="p-space-lg rounded-2xl bg-canvas-cream shadow-sm hover:shadow-md transition-shadow">
+<span class="material-symbols-outlined text-[32px] text-secondary mb-3">star</span>
+<span class="font-headline-lg text-headline-lg text-deep-forest font-bold block mb-1">Nota 5,0</span>
+<span class="font-title text-title text-deep-forest font-semibold block mb-2">no Google</span>
+<p class="font-body-sm text-body-sm text-text-muted">Excelência, serenidade e carinho reconhecidos unanimente pelos tutores atendidos.</p>
+</div>
+<div class="p-space-lg rounded-2xl bg-canvas-cream shadow-sm hover:shadow-md transition-shadow">
+<span class="material-symbols-outlined text-[32px] text-primary mb-3">cottage</span>
+<span class="font-headline-lg text-headline-lg text-deep-forest font-bold block mb-1">100%</span>
+<span class="font-title text-title text-deep-forest font-semibold block mb-2">Domiciliar</span>
+<p class="font-body-sm text-body-sm text-text-muted">Atendimento humanizado, tranquilo e meticuloso sem o ambiente estressante de clínicas.</p>
+</div>
+</div>
+<!-- Detailed Biography Card -->
+<div class="bg-pale-sage/50 rounded-3xl p-6 sm:p-10 lg:p-12 shadow-[0_10px_30px_-5px_rgba(27,56,43,0.06)]">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+<div class="lg:col-span-5 flex justify-center">
+<div class="relative w-full max-w-[340px] aspect-[3/4] rounded-2xl overflow-hidden shadow-xl bg-surface-white">
+<img alt="Dra. Milena Kohhausch CRMV-SC 10332" class="w-full h-full object-cover object-top" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAYi-TMTjqir4dC2Jag_2SmW5T0Lo99qG8zbrlSbnRkmz5U_th5OfBaPYB31PIsmoCgjRWWuaxioWLUr2bRhPDhJXaSYstM23ynF6zOOrf9dsfM8R1YrKC9Mc0AblgqUx_LfDvFkUu31AqwHowDCAJ0160pmz33_6WSRW7QPNbDkiPdMMfW6iwH0nxqY2_ABumRZfAOKbvuKy0SfbgQnP1uKl6EOaP57nXdQt5P-c0QSKq1swus_RGOKeoqSKun1GcRva4"/>
+<div class="absolute bottom-3 left-3 bg-surface-white/95 backdrop-blur-md px-3 py-1.5 rounded-full shadow-sm flex items-center gap-1.5 text-deep-forest font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[16px] text-primary">verified</span>
+<span>CRMV-SC 10332</span>
+</div>
+</div>
+</div>
+<div class="lg:col-span-7 flex flex-col items-start">
+<span class="px-3.5 py-1 rounded-full bg-surface-white text-primary font-label-md text-label-md font-semibold mb-3 shadow-sm">
+              Conheça a veterinária que vai cuidar do seu pet
+            </span>
+<h3 class="font-headline-lg text-headline-lg text-deep-forest mb-2">
+              Dra. Milena Kohhausch
+            </h3>
+<p class="font-title text-title text-primary mb-4 font-semibold">
+              Médica-veterinária • CRMV-SC 10332
+            </p>
+<div class="space-y-3 font-body-md text-body-md text-on-surface-variant mb-space-lg">
+<p>
+                Graduada em Medicina Veterinária e pós-graduada em Clínica Médica e Cirúrgica de Pequenos Animais, a Dra. Milena atua há mais de 8 anos com foco na saúde, na prevenção e no bem-estar de cães e gatos.
+              </p>
+<p>
+                A criação da <strong>Vet na Porta</strong> nasceu do desejo de proporcionar uma experiência médica acolhedora e sem traumas: uma consulta onde o paciente é observado em seu habitat natural, permitindo diagnósticos mais fidedignos e condutas individualizadas com serenidade e respeito.
+              </p>
+</div>
+<!-- Qualification bullets -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-space-xl w-full">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-[20px] text-soft-sage">check_circle</span>
+<span class="font-label-md text-label-md text-deep-forest">Pós-graduada em Clínica e Cirurgia</span>
+</div>
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-[20px] text-soft-sage">check_circle</span>
+<span class="font-label-md text-label-md text-deep-forest">Abordagem Fear Free (Sem Medo)</span>
+</div>
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-[20px] text-soft-sage">check_circle</span>
+<span class="font-label-md text-label-md text-deep-forest">Avaliação clínica minuciosa</span>
+</div>
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-[20px] text-soft-sage">check_circle</span>
+<span class="font-label-md text-label-md text-deep-forest">Orientação empática ao tutor</span>
+</div>
+</div>
+<a class="inline-flex items-center gap-2 px-8 py-3.5 bg-primary hover:bg-on-primary-container text-on-primary font-label-lg text-label-lg rounded-full shadow-[0_6px_20px_-2px_rgba(0,109,51,0.25)] transition-all hover:-translate-y-0.5" href="https://wa.me/5547992327390?text=Ol%C3%A1%20Dra.%20Milena%2C%20gostaria%20de%20agendar%20um%20atendimento%20domiciliar" rel="noopener noreferrer" target="_blank">
+<span class="material-symbols-outlined text-[20px]">chat</span>
+<span>Agendar atendimento com a Dra. Milena</span>
+</a>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 3. SERVIÇOS E TRATAMENTOS -->
+<section class="w-full py-space-3xl bg-background relative" id="servicos">
+<div class="max-w-[1200px] mx-auto px-margin-mobile lg:px-margin-desktop">
+<div class="text-center max-w-3xl mx-auto mb-space-2xl">
+<span class="font-label-md text-label-md text-primary tracking-wide uppercase font-semibold block mb-2">Cuidados no Lar</span>
+<h2 class="font-headline-lg text-headline-lg text-deep-forest mb-space-md">
+          Cuidado veterinário sem precisar sair de casa
+        </h2>
+<p class="font-body-lg text-body-lg text-text-muted leading-relaxed">
+          A Vet na Porta oferece os principais cuidados veterinários no conforto do seu lar. Assim, seu pet recebe atenção profissional em um ambiente conhecido, enquanto você evita deslocamentos e salas de espera.
+        </p>
+</div>
+<!-- 5 Service Cards Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-space-2xl">
+<!-- 1. Consulta Veterinária -->
+<div class="bg-surface-white p-space-lg rounded-2xl shadow-[0_4px_20px_-2px_rgba(27,56,43,0.04)] hover:shadow-[0_12px_32px_-4px_rgba(27,56,43,0.08)] transition-all flex flex-col justify-between">
+<div>
+<div class="w-12 h-12 rounded-xl bg-pale-sage flex items-center justify-center text-primary mb-space-md">
+<span class="material-symbols-outlined text-[26px]">stethoscope</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-deep-forest mb-2">Consulta veterinária domiciliar</h3>
+<p class="font-body-sm text-body-sm text-text-muted mb-4 leading-relaxed">
+              Avaliação clínica completa do pet em seu próprio ambiente, proporcionando observação comportamental natural e diagnóstico preciso sem estresse.
+            </p>
+<div class="space-y-2 mb-6">
+<div class="flex items-start gap-2">
+<span class="material-symbols-outlined text-[16px] text-soft-sage mt-1">check_circle</span>
+<span class="font-body-sm text-body-sm text-deep-forest">Alterações de apetite, fezes ou vômitos</span>
+</div>
+<div class="flex items-start gap-2">
+<span class="material-symbols-outlined text-[16px] text-soft-sage mt-1">check_circle</span>
+<span class="font-body-sm text-body-sm text-deep-forest">Coceiras, alergias ou problemas de pele</span>
+</div>
+<div class="flex items-start gap-2">
+<span class="material-symbols-outlined text-[16px] text-soft-sage mt-1">check_circle</span>
+<span class="font-body-sm text-body-sm text-deep-forest">Check-up preventivo para filhotes e idosos</span>
+</div>
+</div>
+</div>
+<a class="inline-flex items-center justify-center gap-1.5 text-primary hover:text-on-primary-container font-label-md text-label-md font-semibold pt-4" href="https://wa.me/5547992327390?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20se%20a%20consulta%20domiciliar%20atende%20o%20caso%20do%20meu%20pet" rel="noopener noreferrer" target="_blank">
+<span>Saber se pode ser feito em casa</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+</div>
+<!-- 2. Vacinação -->
+<div class="bg-surface-white p-space-lg rounded-2xl shadow-[0_4px_20px_-2px_rgba(27,56,43,0.04)] hover:shadow-[0_12px_32px_-4px_rgba(27,56,43,0.08)] transition-all flex flex-col justify-between">
+<div>
+<div class="w-12 h-12 rounded-xl bg-pale-sage flex items-center justify-center text-primary mb-space-md">
+<span class="material-symbols-outlined text-[26px]">vaccines</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-deep-forest mb-2">Vacinação de cães e gatos</h3>
+<p class="font-body-sm text-body-sm text-text-muted mb-4 leading-relaxed">
+              Mais proteção para o seu pet, com menos estresse durante a aplicação. Vacinas éticas de alto padrão com controle rigoroso de temperatura e carteirinha oficial.
+            </p>
+<div class="space-y-2 mb-6">
+<div class="flex items-start gap-2">
+<span class="material-symbols-outlined text-[16px] text-soft-sage mt-1">check_circle</span>
+<span class="font-body-sm text-body-sm text-deep-forest">V8/V10, Antirrábica, Gripe e Giárdia para cães</span>
+</div>
+<div class="flex items-start gap-2">
+<span class="material-symbols-outlined text-[16px] text-soft-sage mt-1">check_circle</span>
+<span class="font-body-sm text-body-sm text-deep-forest">V4/V5 e Antirrábica para felinos</span>
+</div>
+<div class="flex items-start gap-2">
+<span class="material-symbols-outlined text-[16px] text-soft-sage mt-1">check_circle</span>
+<span class="font-body-sm text-body-sm text-deep-forest">Protocolo vacinal personalizado por estilo de vida</span>
+</div>
+</div>
+</div>
+<a class="inline-flex items-center justify-center gap-1.5 text-primary hover:text-on-primary-container font-label-md text-label-md font-semibold pt-4" href="https://wa.me/5547992327390?text=Ol%C3%A1%2C%20gostaria%20de%20atualizar%20a%20vacina%C3%A7%C3%A3o%20do%20meu%20pet" rel="noopener noreferrer" target="_blank">
+<span>Saber se pode ser feito em casa</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+</div>
+<!-- 3. Coleta de Exames -->
+<div class="bg-surface-white p-space-lg rounded-2xl shadow-[0_4px_20px_-2px_rgba(27,56,43,0.04)] hover:shadow-[0_12px_32px_-4px_rgba(27,56,43,0.08)] transition-all flex flex-col justify-between">
+<div>
+<div class="w-12 h-12 rounded-xl bg-pale-sage flex items-center justify-center text-primary mb-space-md">
+<span class="material-symbols-outlined text-[26px]">chips</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-deep-forest mb-2">Coleta de exames laboratoriais</h3>
+<p class="font-body-sm text-body-sm text-text-muted mb-4 leading-relaxed">
+              Coletas sem a agitação e o medo que costumam alterar os parâmetros de pressão e glicemia em clínicas.
+            </p>
+<div class="space-y-2 mb-6">
+<div class="flex items-start gap-2">
+<span class="material-symbols-outlined text-[16px] text-soft-sage mt-1">check_circle</span>
+<span class="font-body-sm text-body-sm text-deep-forest">Exames de sangue completos (hemograma e bioquímicos)</span>
+</div>
+<div class="flex items-start gap-2">
+<span class="material-symbols-outlined text-[16px] text-soft-sage mt-1">check_circle</span>
+<span class="font-body-sm text-body-sm text-deep-forest">Exames de urina, fezes e citologias dermatológicas</span>
+</div>
+<div class="flex items-start gap-2">
+<span class="material-symbols-outlined text-[16px] text-soft-sage mt-1">check_circle</span>
+<span class="font-body-sm text-body-sm text-deep-forest">Encaminhamento para laboratórios de referência</span>
+</div>
+</div>
+</div>
+<a class="inline-flex items-center justify-center gap-1.5 text-primary hover:text-on-primary-container font-label-md text-label-md font-semibold pt-4" href="https://wa.me/5547992327390?text=Ol%C3%A1%2C%20preciso%20de%20coleta%20de%20exames%20em%20casa" rel="noopener noreferrer" target="_blank">
+<span>Saber se pode ser feito em casa</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+</div>
+<!-- 4. Medicamentos e Acompanhamento -->
+<div class="bg-surface-white p-space-lg rounded-2xl shadow-[0_4px_20px_-2px_rgba(27,56,43,0.04)] hover:shadow-[0_12px_32px_-4px_rgba(27,56,43,0.08)] transition-all flex flex-col justify-between">
+<div>
+<div class="w-12 h-12 rounded-xl bg-pale-sage flex items-center justify-center text-primary mb-space-md">
+<span class="material-symbols-outlined text-[26px]">medication</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-deep-forest mb-2">Aplicação de medicamentos e cuidados</h3>
+<p class="font-body-sm text-body-sm text-text-muted mb-4 leading-relaxed">
+              Suporte prático para tutores que têm dificuldade de administrar remédios ou necessitam de apoio na reabilitação domiciliar.
+            </p>
+<div class="space-y-2 mb-6">
+<div class="flex items-start gap-2">
+<span class="material-symbols-outlined text-[16px] text-soft-sage mt-1">check_circle</span>
+<span class="font-body-sm text-body-sm text-deep-forest">Injeções subcutâneas e intramusculares prescritas</span>
+</div>
+<div class="flex items-start gap-2">
+<span class="material-symbols-outlined text-[16px] text-soft-sage mt-1">check_circle</span>
+<span class="font-body-sm text-body-sm text-deep-forest">Curativos especiais e cuidados pós-operatórios</span>
+</div>
+<div class="flex items-start gap-2">
+<span class="material-symbols-outlined text-[16px] text-soft-sage mt-1">check_circle</span>
+<span class="font-body-sm text-body-sm text-deep-forest">Retirada de pontos com técnica indolor</span>
+</div>
+</div>
+</div>
+<a class="inline-flex items-center justify-center gap-1.5 text-primary hover:text-on-primary-container font-label-md text-label-md font-semibold pt-4" href="https://wa.me/5547992327390?text=Ol%C3%A1%2C%20preciso%20de%20aplica%C3%A7%C3%A3o%20de%20medicamento%20ou%20curativo" rel="noopener noreferrer" target="_blank">
+<span>Saber se pode ser feito em casa</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+</div>
+<!-- 5. Pequenos Procedimentos -->
+<div class="bg-surface-white p-space-lg rounded-2xl shadow-[0_4px_20px_-2px_rgba(27,56,43,0.04)] hover:shadow-[0_12px_32px_-4px_rgba(27,56,43,0.08)] transition-all flex flex-col justify-between">
+<div>
+<div class="w-12 h-12 rounded-xl bg-pale-sage flex items-center justify-center text-primary mb-space-md">
+<span class="material-symbols-outlined text-[26px]">medical_services</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-deep-forest mb-2">Pequenos procedimentos em domicílio</h3>
+<p class="font-body-sm text-body-sm text-text-muted mb-4 leading-relaxed">
+              Procedimentos ambulatoriais de baixa complexidade realizados com critérios éticos rigorosos de esterilização e conforto.
+            </p>
+<div class="space-y-2 mb-6">
+<div class="flex items-start gap-2">
+<span class="material-symbols-outlined text-[16px] text-soft-sage mt-1">check_circle</span>
+<span class="font-body-sm text-body-sm text-deep-forest">Limpeza e desinfecção de feridas superficiais</span>
+</div>
+<div class="flex items-start gap-2">
+<span class="material-symbols-outlined text-[16px] text-soft-sage mt-1">check_circle</span>
+<span class="font-body-sm text-body-sm text-deep-forest">Avaliação prévia criteriosa para segurança total</span>
+</div>
+<div class="flex items-start gap-2">
+<span class="material-symbols-outlined text-[16px] text-soft-sage mt-1">check_circle</span>
+<span class="font-body-sm text-body-sm text-deep-forest">Triagem e encaminhamento responsável se necessário</span>
+</div>
+</div>
+</div>
+<a class="inline-flex items-center justify-center gap-1.5 text-primary hover:text-on-primary-container font-label-md text-label-md font-semibold pt-4" href="https://wa.me/5547992327390?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20sobre%20procedimentos%20em%20casa" rel="noopener noreferrer" target="_blank">
+<span>Saber se pode ser feito em casa</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+</div>
+<!-- 6. Card Benefício Complementar -->
+<div class="bg-gradient-to-br from-pale-sage to-surface-white p-space-lg rounded-2xl shadow-sm flex flex-col justify-between">
+<div>
+<div class="w-12 h-12 rounded-xl bg-surface-white flex items-center justify-center text-primary mb-space-md shadow-sm">
+<span class="material-symbols-outlined text-[26px]">psychology</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-deep-forest mb-2">Abordagem amiga dos gatos e cães sensíveis</h3>
+<p class="font-body-sm text-body-sm text-text-muted mb-4 leading-relaxed">
+              Pets idosos, assustados ou que entram em pânico em carros encontram no atendimento domiciliar uma experiência tranquila e livre de traumas.
+            </p>
+<div class="p-3 bg-surface-white/80 rounded-xl mb-4">
+<p class="font-label-sm text-label-sm text-deep-forest font-semibold">Tutor participa ativamente</p>
+<p class="font-body-sm text-body-sm text-text-muted">Mais tempo de conversa para tirar todas as dúvidas sem pressa.</p>
+</div>
+</div>
+<a class="inline-flex items-center justify-center gap-1.5 text-primary font-label-md text-label-md font-semibold pt-4" href="https://wa.me/5547992327390?text=Ol%C3%A1%2C%20tenho%20um%20pet%20muito%20sens%C3%ADvel%20e%20gostaria%20de%20orienta%C3%A7%C3%A3o" rel="noopener noreferrer" target="_blank">
+<span>Conversar sobre meu pet</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+</div>
+</div>
+<!-- Banner de Orientação Intermediária -->
+<div class="bg-deep-forest text-on-primary rounded-3xl p-8 lg:p-12 shadow-xl flex flex-col lg:flex-row items-center justify-between gap-8">
+<div class="max-w-2xl">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-white/10 text-primary-fixed mb-3 font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[16px]">help</span>
+<span>Atendimento Personalizado</span>
+</div>
+<h3 class="font-headline-lg text-headline-lg text-surface-white mb-3">
+            Não sabe qual atendimento o seu pet precisa?
+          </h3>
+<p class="font-body-md text-body-md text-pale-sage/90">
+            Conte para nossa equipe o que está acontecendo. Vamos entender a situação com carinho, orientar sobre o atendimento mais adequado e informar os horários disponíveis.
+          </p>
+</div>
+<div class="w-full lg:w-auto flex-shrink-0">
+<a class="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-4 bg-soft-sage hover:bg-primary-container text-surface-white font-label-lg text-label-lg rounded-full shadow-lg transition-all hover:scale-[1.02]" href="https://wa.me/5547992327390?text=Ol%C3%A1%2C%20n%C3%A3o%20sei%20ao%20certo%20qual%20atendimento%20meu%20pet%20precisa%2C%20pode%20me%20orientar%3F" rel="noopener noreferrer" target="_blank">
+<span class="material-symbols-outlined text-[20px]">chat</span>
+<span>Falar com a Vet na Porta pelo WhatsApp</span>
+</a>
+</div>
+</div>
+</div>
+</section>
+<!-- 4. DEPOIMENTOS (PROVA SOCIAL) -->
+<section class="w-full py-space-3xl bg-surface-white relative" id="depoimentos">
+<div class="max-w-[1200px] mx-auto px-margin-mobile lg:px-margin-desktop">
+<div class="text-center max-w-3xl mx-auto mb-space-2xl">
+<span class="font-label-md text-label-md text-secondary tracking-wide uppercase font-semibold block mb-2">Depoimentos Verificados</span>
+<h2 class="font-headline-lg text-headline-lg text-deep-forest mb-space-md">
+          Quem conhece, recomenda
+        </h2>
+<p class="font-body-lg text-body-lg text-text-muted leading-relaxed">
+          A confiança dos tutores é construída em cada detalhe: pontualidade, carinho sincero com o pet e explicações minuciosas para a família.
+        </p>
+</div>
+<!-- Testimonials Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-lg mb-space-2xl">
+<!-- Depoimento 1 -->
+<div class="p-space-xl rounded-2xl bg-canvas-cream relative flex flex-col justify-between shadow-sm">
+<div>
+<div class="flex items-center gap-1 text-[#F59E0B] mb-4">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<p class="font-body-md text-body-md text-deep-forest mb-6 italic leading-relaxed">
+              “Fomos muito bem atendidos. Além do cuidado com nossa cachorrinha, recebemos orientações importantes que continuamos utilizando no dia a dia.”
+            </p>
+</div>
+<div class="flex items-center gap-3 pt-4">
+<div class="w-10 h-10 rounded-full bg-pale-sage flex items-center justify-center font-title text-title text-primary font-bold">
+              M
+            </div>
+<div>
+<span class="font-label-md text-label-md text-deep-forest font-bold block">Mariana S.</span>
+<span class="font-body-sm text-body-sm text-text-muted">tutora da Mel 🐶</span>
+</div>
+</div>
+</div>
+<!-- Depoimento 2 -->
+<div class="p-space-xl rounded-2xl bg-canvas-cream relative flex flex-col justify-between shadow-sm">
+<div>
+<div class="flex items-center gap-1 text-[#F59E0B] mb-4">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<p class="font-body-md text-body-md text-deep-forest mb-6 italic leading-relaxed">
+              “O atendimento em casa foi acolhedor, cuidadoso e muito paciente. Nossos pets ficaram mais tranquilos e nós nos sentimos seguros durante todo o processo.”
+            </p>
+</div>
+<div class="flex items-center gap-3 pt-4">
+<div class="w-10 h-10 rounded-full bg-pale-sage flex items-center justify-center font-title text-title text-primary font-bold">
+              C
+            </div>
+<div>
+<span class="font-label-md text-label-md text-deep-forest font-bold block">Carlos E.</span>
+<span class="font-body-sm text-body-sm text-text-muted">tutor do Thor 🐕</span>
+</div>
+</div>
+</div>
+<!-- Depoimento 3 -->
+<div class="p-space-xl rounded-2xl bg-canvas-cream relative flex flex-col justify-between shadow-sm">
+<div>
+<div class="flex items-center gap-1 text-[#F59E0B] mb-4">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<p class="font-body-md text-body-md text-deep-forest mb-6 italic leading-relaxed">
+              “Uma experiência muito positiva. As veterinárias foram atenciosas, explicaram tudo com clareza e cuidaram dos nossos gatos sem que eles precisassem enfrentar o estresse de sair de casa.”
+            </p>
+</div>
+<div class="flex items-center gap-3 pt-4">
+<div class="w-10 h-10 rounded-full bg-pale-sage flex items-center justify-center font-title text-title text-primary font-bold">
+              F
+            </div>
+<div>
+<span class="font-label-md text-label-md text-deep-forest font-bold block">Fernanda L.</span>
+<span class="font-body-sm text-body-sm text-text-muted">tutora do Fred e da Mia 🐱</span>
+</div>
+</div>
+</div>
+<!-- Depoimento 4 -->
+<div class="p-space-xl rounded-2xl bg-canvas-cream relative flex flex-col justify-between shadow-sm">
+<div>
+<div class="flex items-center gap-1 text-[#F59E0B] mb-4">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<p class="font-body-md text-body-md text-deep-forest mb-6 italic leading-relaxed">
+              “Atendimento profissional, carinhoso e dedicado. Foi possível perceber o cuidado com o pet e também com toda a família.”
+            </p>
+</div>
+<div class="flex items-center gap-3 pt-4">
+<div class="w-10 h-10 rounded-full bg-pale-sage flex items-center justify-center font-title text-title text-primary font-bold">
+              L
+            </div>
+<div>
+<span class="font-label-md text-label-md text-deep-forest font-bold block">Lucas &amp; Patrícia</span>
+<span class="font-body-sm text-body-sm text-text-muted">tutores do Bob 🐾</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Depoimentos CTA -->
+<div class="flex justify-center">
+<a class="inline-flex items-center gap-2 px-8 py-3.5 bg-primary hover:bg-on-primary-container text-on-primary font-label-lg text-label-lg rounded-full shadow-[0_8px_24px_-2px_rgba(0,109,51,0.25)] transition-all hover:-translate-y-0.5" href="https://wa.me/5547992327390?text=Ol%C3%A1%2C%20li%20os%20depoimentos%20e%20gostaria%20de%20agendar%20uma%20consulta" rel="noopener noreferrer" target="_blank">
+<span class="material-symbols-outlined text-[20px]">thumb_up</span>
+<span>Ver mais avaliações e agendar consulta</span>
+</a>
+</div>
+</div>
+</section>
+<!-- 5. INSTAGRAM & CONTEÚDO EDUCATIVO -->
+<section class="w-full py-space-3xl bg-background relative">
+<div class="max-w-[1200px] mx-auto px-margin-mobile lg:px-margin-desktop">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+<div class="lg:col-span-5">
+<span class="font-label-md text-label-md text-primary tracking-wide uppercase font-semibold block mb-2">Comunidade &amp; Educação</span>
+<h2 class="font-headline-lg text-headline-lg text-deep-forest mb-space-md">
+            Informação também é uma forma de cuidar
+          </h2>
+<p class="font-body-md text-body-md text-text-muted mb-space-lg leading-relaxed">
+            Acompanhe a Vet na Porta no Instagram e receba conteúdos sobre saúde, prevenção, vacinação, comportamento e qualidade de vida dos animais. Além das orientações para o dia a dia, você poderá conhecer mais sobre os atendimentos e ver de perto o cuidado dedicado a cada paciente.
+          </p>
+<a class="inline-flex items-center gap-2 px-8 py-3.5 bg-surface-white hover:bg-pale-sage text-deep-forest font-label-lg text-label-lg rounded-full shadow-sm transition-all hover:-translate-y-0.5" href="https://instagram.com/vetnaporta" rel="noopener noreferrer" target="_blank">
+<span class="material-symbols-outlined text-secondary text-[20px]">photo_camera</span>
+<span>Seguir a @vetnaporta no Instagram</span>
+</a>
+</div>
+<!-- Social Grid Visual Preview -->
+<div class="lg:col-span-7">
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+<!-- Card Post 1 -->
+<a class="group bg-surface-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col" href="https://instagram.com/vetnaporta" rel="noopener noreferrer" target="_blank">
+<div class="relative aspect-square overflow-hidden bg-pale-sage">
+<img alt="Dra. Milena Kohhausch em atendimento" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC_Jm5vZ_gnRlXXt2yMfHzi6VTROFQLDPrYZsAtZrNUUtTsawSL2_eG78HLjxNwYXIBrmzaYt0s3uEruit8BrqSUxmyMI8med6xymYEpeSy3-XsGpvS71KHBoM6wINwqsggJ4LOfRIV56kPNAHcIt91-ze-npQQDH6erRZBtLl_5L449oHw157U1kIiIQp_-hbxZ1gKbLKumdT2VSLZv6wHm7n0Z-HaOg3SmVS6m4h5z6xNFTZra1yP9sIl9maEhyJrDu4"/>
+<div class="absolute top-3 right-3 bg-surface-white/80 backdrop-blur-sm p-1.5 rounded-full text-deep-forest">
+<span class="material-symbols-outlined text-[16px]">play_arrow</span>
+</div>
+</div>
+<div class="p-4 flex-1 flex flex-col justify-between">
+<span class="font-label-sm text-label-sm text-primary font-bold block mb-1">Rotina Domiciliar</span>
+<p class="font-body-sm text-body-sm text-deep-forest font-medium line-clamp-2">Como preparamos o ambiente para gatos não sentirem medo.</p>
+</div>
+</a>
+<!-- Card Post 2 -->
+<a class="group bg-surface-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col" href="https://instagram.com/vetnaporta" rel="noopener noreferrer" target="_blank">
+<div class="relative aspect-square overflow-hidden bg-coral-subtle flex items-center justify-center p-6 text-center">
+<div class="flex flex-col items-center">
+<span class="material-symbols-outlined text-[36px] text-secondary mb-2">vaccines</span>
+<span class="font-label-md text-label-md text-deep-forest font-bold">Calendário Vacinal</span>
+<span class="font-label-sm text-label-sm text-text-muted mt-1">Quais vacinas seu pet realmente precisa?</span>
+</div>
+</div>
+<div class="p-4 flex-1 flex flex-col justify-between">
+<span class="font-label-sm text-label-sm text-secondary font-bold block mb-1">Dica de Saúde</span>
+<p class="font-body-sm text-body-sm text-deep-forest font-medium line-clamp-2">A importância de manter a imunização em dia sem traumas.</p>
+</div>
+</a>
+<!-- Card Post 3 -->
+<a class="group bg-surface-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col" href="https://instagram.com/vetnaporta" rel="noopener noreferrer" target="_blank">
+<div class="relative aspect-square overflow-hidden bg-pale-sage">
+<img alt="Dra. Milena - Medicina Veterinária Preventiva" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDUgK0Y1WPNXeVC1kQPzlb1BCandLeauC6-LDR03or_wSeGeQvm1qUwHHd2PXcP1Jhqjy8mLw816EUb7t2bJX8XGVn-o-WOpaoZSEidguNbxzMFGfyQYVhW_OuayihH7X8v5TdIGcP2dSHXtFfL30CdYziC0G1NIbG2pn-1djKVYBp0JBTqDOWbJBtSkq0UZ1OJr_kfdYBj2P_CAzWJjpC4yCRB_gYnaoiZLjoor0GlBFDr3Wk3HYg38NOoQcaa4wyZj_c"/>
+<div class="absolute top-3 right-3 bg-surface-white/80 backdrop-blur-sm p-1.5 rounded-full text-deep-forest">
+<span class="material-symbols-outlined text-[16px]">collections</span>
+</div>
+</div>
+<div class="p-4 flex-1 flex flex-col justify-between">
+<span class="font-label-sm text-label-sm text-primary font-bold block mb-1">Bastidores</span>
+<p class="font-body-sm text-body-sm text-deep-forest font-medium line-clamp-2">Um dia de visitas domiciliares por Blumenau e região.</p>
+</div>
+</a>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 6. PERGUNTAS FREQUENTES (FAQ) -->
+<section class="w-full py-space-3xl bg-surface-white relative" id="faq">
+<div class="max-w-[860px] mx-auto px-margin-mobile lg:px-margin-desktop">
+<div class="text-center mb-space-2xl">
+<span class="font-label-md text-label-md text-primary tracking-wide uppercase font-semibold block mb-2">Tire suas dúvidas</span>
+<h2 class="font-headline-lg text-headline-lg text-deep-forest mb-space-md">
+          Perguntas Frequentes
+        </h2>
+<p class="font-body-md text-body-md text-text-muted">
+          Reunimos aqui as principais respostas sobre a logística e o funcionamento dos atendimentos domiciliares.
+        </p>
+</div>
+<!-- FAQ Accordion Container -->
+<div class="space-y-4 mb-space-2xl">
+<!-- Item 1 -->
+<div class="rounded-2xl bg-canvas-cream overflow-hidden shadow-sm transition-all">
+<button class="w-full text-left p-space-md sm:p-space-lg flex items-center justify-between gap-4 font-title text-title text-deep-forest font-semibold focus:outline-none" onclick="toggleFaq(1)" type="button">
+<span>1. Quais regiões a Vet na Porta atende?</span>
+<span class="material-symbols-outlined text-soft-sage text-[24px] transition-transform duration-300" id="faq-icon-1">expand_more</span>
+</button>
+<div class="hidden px-space-md sm:px-space-lg pb-space-lg pt-0 text-text-muted font-body-md text-body-md" id="faq-answer-1">
+<div class="pl-4 py-2 bg-pale-sage/40 rounded-xl">
+<p class="leading-relaxed">
+                Atendemos em toda a cidade de <strong>Blumenau</strong> e em diversas cidades da região do Vale do Itajaí (como Gaspar, Indaial e Pomerode sob consulta de rota). Você pode enviar o seu bairro pelo WhatsApp para confirmarmos a taxa de deslocamento e disponibilidade de horário para o seu endereço.
+              </p>
+</div>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="rounded-2xl bg-canvas-cream overflow-hidden shadow-sm transition-all">
+<button class="w-full text-left p-space-md sm:p-space-lg flex items-center justify-between gap-4 font-title text-title text-deep-forest font-semibold focus:outline-none" onclick="toggleFaq(2)" type="button">
+<span>2. Quais animais podem ser atendidos em casa?</span>
+<span class="material-symbols-outlined text-soft-sage text-[24px] transition-transform duration-300" id="faq-icon-2">expand_more</span>
+</button>
+<div class="hidden px-space-md sm:px-space-lg pb-space-lg pt-0 text-text-muted font-body-md text-body-md" id="faq-answer-2">
+<div class="pl-4 py-2 bg-pale-sage/40 rounded-xl">
+<p class="leading-relaxed">
+                Nosso atendimento é dedicado exclusivamente a <strong>cães e gatos</strong> de todas as idades, portes e raças. Na hora do agendamento, coletamos previamente informações como idade, histórico e temperamento do animal para organizar os materiais e técnicas ideais para ele.
+              </p>
+</div>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="rounded-2xl bg-canvas-cream overflow-hidden shadow-sm transition-all">
+<button class="w-full text-left p-space-md sm:p-space-lg flex items-center justify-between gap-4 font-title text-title text-deep-forest font-semibold focus:outline-none" onclick="toggleFaq(3)" type="button">
+<span>3. O atendimento em casa substitui uma clínica veterinária?</span>
+<span class="material-symbols-outlined text-soft-sage text-[24px] transition-transform duration-300" id="faq-icon-3">expand_more</span>
+</button>
+<div class="hidden px-space-md sm:px-space-lg pb-space-lg pt-0 text-text-muted font-body-md text-body-md" id="faq-answer-3">
+<div class="pl-4 py-2 bg-pale-sage/40 rounded-xl">
+<p class="leading-relaxed">
+                O atendimento domiciliar cobre com perfeição a <strong>medicina preventiva, consultas clínicas de rotina, vacinas, exames laboratoriais e tratamentos contínuos</strong>. No entanto, ele não substitui procedimentos que exigem estrutura hospitalar, anestesia inalatória geral, raio-x, ultrassom complexo ou internação 24h. Caso seu pet necessite desses recursos, a Dra. Milena orienta e faz o encaminhamento direto para clínicas e hospitais parceiros de confiança.
+              </p>
+</div>
+</div>
+</div>
+<!-- Item 4 -->
+<div class="rounded-2xl bg-canvas-cream overflow-hidden shadow-sm transition-all">
+<button class="w-full text-left p-space-md sm:p-space-lg flex items-center justify-between gap-4 font-title text-title text-deep-forest font-semibold focus:outline-none" onclick="toggleFaq(4)" type="button">
+<span>4. A Vet na Porta atende casos de emergência?</span>
+<span class="material-symbols-outlined text-soft-sage text-[24px] transition-transform duration-300" id="faq-icon-4">expand_more</span>
+</button>
+<div class="hidden px-space-md sm:px-space-lg pb-space-lg pt-0 text-text-muted font-body-md text-body-md" id="faq-answer-4">
+<div class="pl-4 py-2 bg-pale-sage/40 rounded-xl">
+<p class="leading-relaxed">
+                Trabalhamos com <strong>agendamento prévio programado</strong>. Em situações de emergência com risco iminente à vida (como atropelamentos, convulsões ativas ininterruptas, sangramentos graves ou intoxicações agudas), orientamos levar o animal imediatamente ao hospital veterinário 24 horas mais próximo com suporte de UTI.
+              </p>
+</div>
+</div>
+</div>
+<!-- Item 5 -->
+<div class="rounded-2xl bg-canvas-cream overflow-hidden shadow-sm transition-all">
+<button class="w-full text-left p-space-md sm:p-space-lg flex items-center justify-between gap-4 font-title text-title text-deep-forest font-semibold focus:outline-none" onclick="toggleFaq(5)" type="button">
+<span>5. Como faço para agendar e qual é o valor?</span>
+<span class="material-symbols-outlined text-soft-sage text-[24px] transition-transform duration-300" id="faq-icon-5">expand_more</span>
+</button>
+<div class="hidden px-space-md sm:px-space-lg pb-space-lg pt-0 text-text-muted font-body-md text-body-md" id="faq-answer-5">
+<div class="pl-4 py-2 bg-pale-sage/40 rounded-xl">
+<p class="leading-relaxed">
+                O agendamento é feito de forma rápida pelo nosso WhatsApp. Basta nos informar seu bairro, o nome da sua mascote e o motivo da consulta (se é vacina, exame ou queixa clínica). Nossa equipe informará os valores detalhados da consulta e da taxa de deslocamento, além dos dias e horários livres.
+              </p>
+</div>
+</div>
+</div>
+</div>
+<!-- FAQ CTA Block -->
+<div class="p-space-lg rounded-2xl bg-pale-sage/70 text-center flex flex-col sm:flex-row items-center justify-between gap-4">
+<div class="text-left">
+<span class="font-title text-title text-deep-forest font-bold block">Ainda tem alguma dúvida específica?</span>
+<span class="font-body-sm text-body-sm text-text-muted">Nossa equipe responde rapidamente com todas as orientações.</span>
+</div>
+<a class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-primary hover:bg-on-primary-container text-on-primary font-label-md text-label-md rounded-full shadow-sm transition-all flex-shrink-0" href="https://wa.me/5547992327390?text=Ol%C3%A1%2C%20tenho%20uma%20d%C3%BAvida%20sobre%20os%20atendimentos%20da%20Vet%20na%20Porta" rel="noopener noreferrer" target="_blank">
+<span class="material-symbols-outlined text-[18px]">chat</span>
+<span>Consultar horários e valores pelo WhatsApp</span>
+</a>
+</div>
+</div>
+</section>
+<!-- 7. LOCALIZAÇÃO E CONTATO -->
+<section class="w-full py-space-3xl bg-background relative" id="contato">
+<div class="max-w-[1200px] mx-auto px-margin-mobile lg:px-margin-desktop">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+<!-- Contact details -->
+<div class="lg:col-span-6">
+<span class="font-label-md text-label-md text-primary tracking-wide uppercase font-semibold block mb-2">Área de Cobertura</span>
+<h2 class="font-headline-lg text-headline-lg text-deep-forest mb-space-md">
+            Veterinária domiciliar em Blumenau e região
+          </h2>
+<p class="font-body-lg text-body-lg text-text-muted mb-space-xl leading-relaxed">
+            A Vet na Porta leva o atendimento até sua casa, proporcionando mais comodidade para você e uma experiência mais serena, respeitosa e tranquila para o seu companheiro.
+          </p>
+<!-- Contact items list -->
+<div class="space-y-4 mb-space-xl">
+<a class="p-4 rounded-2xl bg-surface-white shadow-sm hover:shadow-md transition-all flex items-center gap-4" href="https://wa.me/5547992327390" rel="noopener noreferrer" target="_blank">
+<div class="w-12 h-12 rounded-xl bg-pale-sage flex items-center justify-center text-primary flex-shrink-0">
+<span class="material-symbols-outlined text-[24px]">phone_iphone</span>
+</div>
+<div>
+<span class="font-label-sm text-label-sm text-text-muted block">WhatsApp &amp; Agendamento</span>
+<span class="font-headline-sm text-headline-sm text-deep-forest font-bold">(47) 99232-7390</span>
+</div>
+</a>
+<a class="p-4 rounded-2xl bg-surface-white shadow-sm hover:shadow-md transition-all flex items-center gap-4" href="https://instagram.com/vetnaporta" rel="noopener noreferrer" target="_blank">
+<div class="w-12 h-12 rounded-xl bg-coral-subtle flex items-center justify-center text-secondary flex-shrink-0">
+<span class="material-symbols-outlined text-[24px]">photo_camera</span>
+</div>
+<div>
+<span class="font-label-sm text-label-sm text-text-muted block">Rede Social</span>
+<span class="font-headline-sm text-headline-sm text-deep-forest font-bold">@vetnaporta</span>
+</div>
+</a>
+<div class="p-4 rounded-2xl bg-surface-white shadow-sm flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-pale-sage flex items-center justify-center text-primary flex-shrink-0">
+<span class="material-symbols-outlined text-[24px]">schedule</span>
+</div>
+<div>
+<span class="font-label-sm text-label-sm text-text-muted block">Disponibilidade</span>
+<span class="font-title text-title text-deep-forest font-bold">Segunda a Sábado • Sob agendamento</span>
+</div>
+</div>
+</div>
+<!-- Dual buttons -->
+<div class="flex flex-col sm:flex-row items-center gap-3">
+<a class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-primary hover:bg-on-primary-container text-on-primary font-label-lg text-label-lg rounded-full shadow-[0_6px_20px_-2px_rgba(0,109,51,0.25)] transition-all hover:-translate-y-0.5" href="https://wa.me/5547992327390?text=Ol%C3%A1%2C%20quero%20agendar%20um%20atendimento" rel="noopener noreferrer" target="_blank">
+<span class="material-symbols-outlined text-[20px]">chat</span>
+<span>Agendar pelo WhatsApp</span>
+</a>
+<a class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-surface-white hover:bg-pale-sage text-deep-forest font-label-lg text-label-lg rounded-full shadow-sm transition-all" href="https://instagram.com/vetnaporta" rel="noopener noreferrer" target="_blank">
+<span>Abrir Instagram</span>
+</a>
+</div>
+</div>
+<!-- Coverage Card Map Vector Visual -->
+<div class="lg:col-span-6">
+<div class="bg-surface-white rounded-3xl p-6 sm:p-8 shadow-[0_12px_32px_-4px_rgba(27,56,43,0.06)] relative overflow-hidden">
+<div class="flex items-center justify-between mb-6">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-primary animate-ping"></span>
+<span class="font-label-md text-label-md text-deep-forest font-bold">Regiões Atendidas</span>
+</div>
+<span class="font-label-sm text-label-sm text-primary font-bold bg-pale-sage px-3 py-1 rounded-full">Vale do Itajaí</span>
+</div>
+<!-- Stylized Static Map Graphic -->
+<div class="relative w-full h-72 rounded-2xl bg-pale-sage/30 overflow-hidden flex items-center justify-center p-6">
+<!-- Stylized map topology lines -->
+<svg class="absolute inset-0 w-full h-full text-soft-sage/20" fill="none" viewbox="0 0 400 300">
+<circle cx="200" cy="150" r="130" stroke="currentColor" stroke-dasharray="6 6" stroke-width="1.5"></circle>
+<circle cx="200" cy="150" r="90" stroke="currentColor" stroke-width="1.5"></circle>
+<circle cx="200" cy="150" r="45" stroke="currentColor" stroke-dasharray="4 4" stroke-width="1.5"></circle>
+<path d="M50 200 C 150 180, 250 220, 350 170" stroke="currentColor" stroke-width="2"></path>
+<path d="M100 80 C 180 140, 260 100, 320 180" stroke="currentColor" stroke-width="2"></path>
+</svg>
+<!-- Central Pin -->
+<div class="relative z-10 flex flex-col items-center text-center">
+<div class="w-14 h-14 rounded-full bg-primary text-surface-white flex items-center justify-center shadow-lg mb-2 transform hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[28px]">home_pin</span>
+</div>
+<span class="font-title text-title text-deep-forest font-bold">Blumenau - SC</span>
+<span class="font-label-sm text-label-sm text-text-muted mt-0.5">Atendimento em toda a área urbana</span>
+</div>
+<!-- Orbiting City Tags -->
+<div class="absolute top-6 left-6 bg-surface-white px-3 py-1.5 rounded-full shadow-sm text-label-sm font-label-sm text-deep-forest font-medium flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-soft-sage"></span> Gaspar
+              </div>
+<div class="absolute bottom-6 left-8 bg-surface-white px-3 py-1.5 rounded-full shadow-sm text-label-sm font-label-sm text-deep-forest font-medium flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-soft-sage"></span> Indaial
+              </div>
+<div class="absolute top-8 right-6 bg-surface-white px-3 py-1.5 rounded-full shadow-sm text-label-sm font-label-sm text-deep-forest font-medium flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-soft-sage"></span> Pomerode
+              </div>
+</div>
+<!-- Explanatory footer -->
+<div class="mt-6 p-4 rounded-xl bg-canvas-cream flex items-start gap-3">
+<span class="material-symbols-outlined text-soft-sage mt-0.5">local_shipping</span>
+<p class="font-body-sm text-body-sm text-deep-forest leading-relaxed">
+<strong>Nós vamos até a sua casa!</strong> Sem o desgaste do trânsito, sem filas de espera e sem a agitação de salas cheias com outros animais desconhecidos.
+              </p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 8. CHAMADA FINAL (BOTTOM HERO / CTA DE CONVERSÃO) -->
+<section class="w-full py-space-3xl bg-deep-forest text-on-primary relative overflow-hidden">
+<!-- Subtle ambient glow background -->
+<div class="absolute -bottom-24 -left-24 w-96 h-96 rounded-full bg-primary/20 blur-3xl pointer-events-none"></div>
+<div class="absolute top-0 right-0 w-80 h-80 rounded-full bg-warm-coral/10 blur-3xl pointer-events-none"></div>
+<div class="max-w-[1200px] mx-auto px-margin-mobile lg:px-margin-desktop relative z-10">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+<div class="lg:col-span-8 flex flex-col items-start">
+<div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-white/10 text-primary-fixed mb-space-md font-label-md text-label-md font-medium">
+<span class="material-symbols-outlined text-[18px]">favorite</span>
+<span>Saúde, prevenção e aconchego</span>
+</div>
+<h2 class="font-display text-display text-surface-white mb-space-md tracking-tight leading-tight">
+            Seu pet merece cuidado sem sair do lugar em que se sente seguro
+          </h2>
+<p class="font-body-lg text-body-lg text-pale-sage/90 mb-space-xl max-w-2xl leading-relaxed">
+            Agende um atendimento veterinário domiciliar e cuide da saúde do seu companheiro com mais conforto, praticidade e a atenção individual que só uma consulta em casa oferece.
+          </p>
+<div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full sm:w-auto mb-space-md">
+<a class="inline-flex items-center justify-center gap-2.5 px-8 py-4 bg-soft-sage hover:bg-primary-container text-surface-white font-label-lg text-label-lg rounded-full shadow-[0_10px_26px_rgba(78,174,104,0.35)] transition-all hover:-translate-y-0.5" href="https://wa.me/5547992327390?text=Ol%C3%A1%2C%20gostaria%20de%20agendar%20um%20atendimento%20agora%20mesmo" rel="noopener noreferrer" target="_blank">
+<span class="material-symbols-outlined text-[22px]">calendar_today</span>
+<span>Agendar atendimento agora</span>
+</a>
+<a class="inline-flex items-center justify-center gap-2 px-6 py-4 bg-surface-white/10 hover:bg-surface-white/20 text-surface-white font-label-lg text-label-lg rounded-full transition-all" href="tel:+5547992327390">
+<span class="material-symbols-outlined text-[20px]">phone</span>
+<span>Ligar (47) 99232-7390</span>
+</a>
+</div>
+<p class="font-body-sm text-body-sm text-pale-sage/70">
+            Fale com nossa equipe pelo WhatsApp e consulte os próximos horários disponíveis em Blumenau e região.
+          </p>
+</div>
+<!-- Professional badge image thumbnail -->
+<div class="lg:col-span-4 flex justify-center">
+<div class="relative w-64 h-64 sm:w-72 sm:h-72 rounded-full p-2 bg-gradient-to-tr from-soft-sage to-warm-coral/50 shadow-2xl flex items-center justify-center">
+<div class="w-full h-full rounded-full overflow-hidden bg-deep-forest relative">
+<img alt="Dra. Milena Kohhausch" class="w-full h-full object-cover object-top" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCa4UJZ3Nr7ybVCcJtbgpeSzZN_EWW8cks7MET_JMEVxtxzIXgWFKBQGsVjrPKx2jU90aAVu8fQx4Vp8ItpWWMLHRlyQZekQWMB31ZCfYB3ZM-p-NZCQKAfFKzHLoCVUf3U7XGxgDcYVK1LQALwfpPFF-ak6v2uK91JB5WVTeU5xbi_VAAE44XeZdwnhv2zguTJ6QA-c4-13QbL4LfTs-vGYc43vCqluX3howmup8U99XL9Mn9LXeW3yvnvUSKH0K5UpCo"/>
+</div>
+<div class="absolute -bottom-2 bg-surface-white text-deep-forest px-4 py-1.5 rounded-full shadow-lg font-label-sm text-label-sm font-bold flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[16px]">verified</span>
+              CRMV-SC 10332
+            </div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+<script>
+  function toggleFaq(id) {
+    var answer = document.getElementById('faq-answer-' + id);
+    var icon = document.getElementById('faq-icon-' + id);
+    if (!answer || !icon) return;
+
+    var isHidden = answer.classList.contains('hidden');
+
+    // Close others
+    for (var i = 1; i <= 5; i++) {
+      var otherAnswer = document.getElementById('faq-answer-' + i);
+      var otherIcon = document.getElementById('faq-icon-' + i);
+      if (otherAnswer && otherIcon) {
+        otherAnswer.classList.add('hidden');
+        otherIcon.style.transform = 'rotate(0deg)';
+      }
+    }
+
+    if (isHidden) {
+      answer.classList.remove('hidden');
+      icon.style.transform = 'rotate(180deg)';
+    }
+  }
+</script></main><footer class="w-full bg-surface-container-low text-on-surface pt-space-3xl pb-space-xl"><div class="max-w-[1200px] mx-auto px-margin-mobile lg:px-margin-desktop"><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-space-xl mb-space-2xl"><div><div class="flex items-center gap-2 mb-space-md"><img alt="logo.png" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1UuEkWCDJuKx_5dphL2dA_k9hRZWKB0ZJUv1Hzq3FasBlD8uh3EK_dlpB159bGE7XluD1u04lQ3N4rbv2sRvXJzjo8_rfReduSgKZZ2iCgFIok6593kaM6aHE6Y_ziwlHgvxNPR70r5Ep6ZbIwHiYLm0Dm2lpxEyf4i1DhDCELnvFjO5VtKBroHVK_Ck3_Wkmlya4xP30TWmcQBiH35ocg3IULo80c1FKo5Phrfd2Vyk3Atv4xTgK2-MsZaJjvuTJLFl5IjI6pEgF8"/><span class="font-title text-title text-deep-forest font-bold">Vet na Porta</span></div><p class="font-body-sm text-body-sm text-text-muted mb-space-md leading-relaxed">Medicina veterinária humanizada, preventiva e clínica no aconchego do seu lar. Atendimento atencioso e sem estresse para cães e gatos em Blumenau e região.</p><div class="inline-flex items-center gap-space-xs px-space-md py-space-xs bg-pale-sage rounded-full text-deep-forest font-label-sm text-label-sm font-semibold"><span class="material-symbols-outlined text-[16px] text-primary">verified</span><span>CRMV-SC 10332 • Dra. Milena Kohhausch</span></div></div><div><h4 class="font-title text-title text-deep-forest mb-space-md font-bold">Navegação Rápida</h4><ul class="space-y-space-sm font-body-sm text-body-sm text-on-surface-variant"><li><a class="hover:text-primary transition-colors flex items-center gap-2" href="#inicio"><span class="material-symbols-outlined text-[14px] text-soft-sage">arrow_forward</span>Início</a></li><li><a class="hover:text-primary transition-colors flex items-center gap-2" href="#sobre"><span class="material-symbols-outlined text-[14px] text-soft-sage">arrow_forward</span>Sobre a Dra. Milena</a></li><li><a class="hover:text-primary transition-colors flex items-center gap-2" href="#servicos"><span class="material-symbols-outlined text-[14px] text-soft-sage">arrow_forward</span>Serviços Domiciliares</a></li><li><a class="hover:text-primary transition-colors flex items-center gap-2" href="#depoimentos"><span class="material-symbols-outlined text-[14px] text-soft-sage">arrow_forward</span>Depoimentos</a></li><li><a class="hover:text-primary transition-colors flex items-center gap-2" href="#faq"><span class="material-symbols-outlined text-[14px] text-soft-sage">arrow_forward</span>Perguntas Frequentes</a></li><li><a class="hover:text-primary transition-colors flex items-center gap-2" href="#contato"><span class="material-symbols-outlined text-[14px] text-soft-sage">arrow_forward</span>Fale Conosco</a></li></ul></div><div><h4 class="font-title text-title text-deep-forest mb-space-md font-bold">Canais de Atendimento</h4><ul class="space-y-space-md font-body-sm text-body-sm text-on-surface-variant"><li><a class="flex items-start gap-space-sm hover:text-primary transition-colors group" href="https://wa.me/5547992327390" rel="noopener noreferrer" target="_blank"><span class="material-symbols-outlined text-soft-sage group-hover:scale-110 transition-transform">phone_iphone</span><div><span class="block font-label-md text-label-md text-deep-forest">(47) 99232-7390</span><span class="text-label-sm text-label-sm text-text-muted">WhatsApp e Agendamentos</span></div></a></li><li><a class="flex items-start gap-space-sm hover:text-primary transition-colors group" href="https://instagram.com/vetnaporta" rel="noopener noreferrer" target="_blank"><span class="material-symbols-outlined text-soft-sage group-hover:scale-110 transition-transform">photo_camera</span><div><span class="block font-label-md text-label-md text-deep-forest">@vetnaporta</span><span class="text-label-sm text-label-sm text-text-muted">Siga no Instagram</span></div></a></li><li><div class="flex items-start gap-space-sm"><span class="material-symbols-outlined text-soft-sage">location_on</span><div><span class="block font-label-md text-label-md text-deep-forest">Blumenau &amp; Região</span><span class="text-label-sm text-label-sm text-text-muted">Atendimento domiciliar exclusivo</span></div></div></li></ul></div><div><h4 class="font-title text-title text-deep-forest mb-space-md font-bold">Cuidado Tranquilo</h4><p class="font-body-sm text-body-sm text-text-muted mb-space-md leading-relaxed">Consultas sem fila de espera, sem estresse de transporte na caixa de transporte e com todo carinho da rotina do seu pet.</p><div class="p-space-md bg-surface-white rounded-xl shadow-[0_4px_20px_-2px_rgba(27,56,43,0.04)]"><span class="font-label-sm text-label-sm text-deep-forest font-bold block mb-1">Horário de Atendimento</span><span class="font-body-sm text-body-sm text-text-muted block">Segunda a Sexta: 08h às 19h</span><span class="font-body-sm text-body-sm text-text-muted block">Sábados: 08h às 13h</span></div></div></div><div class="pt-space-lg flex flex-col md:flex-row items-center justify-between gap-4"><p class="font-body-sm text-body-sm text-text-muted text-center md:text-left">© 2024 Vet na Porta. Todos os direitos reservados. Dra. Milena Kohhausch CRMV-SC 10332.</p><p class="font-label-sm text-label-sm text-text-muted text-center md:text-right">Atendimento Veterinário Domiciliar • Blumenau - SC</p></div></div></footer></body></html>
